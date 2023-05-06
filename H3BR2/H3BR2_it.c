@@ -9,15 +9,21 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
+#include "H3BR2.h"
+
+
+
 
 uint8_t temp_length[NumOfPorts] = {0};
 uint8_t temp_index[NumOfPorts] = {0};
 uint8_t* error_restart_message = "Restarting...\r\n";
+//uint8_t index_7_seg = 0;
 
 
 /* External variables --------------------------------------------------------*/
 extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
 extern uint8_t UARTRxBufIndex[NumOfPorts];
+extern TIM_HandleTypeDef htim6; /* Timer for 7-segment (2 peices) */
 
 /* External function prototypes ----------------------------------------------*/
 
@@ -327,5 +333,8 @@ void vApplicationMallocFailedHook(void){
 	for(;;);
 }
 /*-----------------------------------------------------------*/
+
+
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

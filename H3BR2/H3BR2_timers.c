@@ -1,8 +1,8 @@
 /*
- BitzOS (BOS) V0.2.9 - Copyright (C) 2017-2022 Hexabitz
+ BitzOS (BOS) V0.2.9 - Copyright (C) 2017-2023 Hexabitz
  All rights reserved
 
- File Name     : H3BR2_timers.c
+ File Name     : H3BR6_timers.c
  Description   : Peripheral timers setup source file.
 
  Required MCU resources :
@@ -20,12 +20,12 @@
 /*----------------------------------------------------------------------------*/
 
 /* Variables ---------------------------------------------------------*/
-GPIO_InitTypeDef GPIO_InitStruct = {0};
 //TIM_HandleTypeDef htim14; /* micro-second delay counter */
 TIM_HandleTypeDef htim16; /* micro-second delay counter */
 //TIM_HandleTypeDef htim15; /* milli-second delay counter */
 TIM_HandleTypeDef htim17; /* milli-second delay counter */
 
+TIM_HandleTypeDef htim6; /* Timer for 7-segment (6 peices) */
 /*  Micro-seconds timebase init function - TIM14 (16-bit)
  */
 void TIM_USEC_Init(void){
@@ -64,7 +64,31 @@ void TIM_USEC_Init(void){
 }
 
 /*-----------------------------------------------------------*/
+void MX_TIM6_Init(void)
+{
 
+	TIM_MasterConfigTypeDef sMasterConfig;
+
+	/* Peripheral clock enable */
+	__TIM6_CLK_ENABLE();
+
+	/* Peripheral configuration */
+	htim6.Instance = TIM6;
+	htim6.Init.Prescaler =999;
+	htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
+	htim6.Init.Period =300;// old one 959 --> 20 ms
+	HAL_TIM_Base_Init(&htim6);
+
+	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+	HAL_TIMEx_MasterConfigSynchronization(&htim6,&sMasterConfig);
+
+	HAL_NVIC_SetPriority(TIM6_DAC_LPTIM1_IRQn,0,0);
+	HAL_NVIC_EnableIRQ(TIM6_DAC_LPTIM1_IRQn);
+
+	HAL_TIM_Base_Start_IT(&htim6);
+
+}
 /*-----------------------------------------------------------*/
 
 /*  Milli-seconds timebase init function - TIM15 (16-bit)
@@ -137,3 +161,4 @@ void StartMilliDelay(uint16_t Delay){
 /*-----------------------------------------------------------*/
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+

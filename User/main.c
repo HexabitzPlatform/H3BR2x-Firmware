@@ -7,6 +7,7 @@
  */
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
+#include <ctype.h>
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -27,8 +28,7 @@ int main(void){
 /* User Task */
 void UserTask(void *argument){
 
-	
-	// put your code here, to run repeatedly.
+
 	while(1){
 
 	}
