@@ -744,21 +744,21 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 
 	switch(code){
 	case CODE_H3BR2_SevenDisplayNumber:
-		  Number=((uint32_t )cMessage[port - 1][shift] ) + ((int32_t )cMessage[port - 1][1 + shift] << 8) + ((int32_t )cMessage[port - 1][2 + shift] << 16) + ((int32_t )cMessage[port - 1][3 + shift] << 24);
+		  Number=(uint32_t )cMessage[port - 1][shift];
 		  SevenDisplayNumber(Number);
 		  break;
 	case CODE_H3BR2_SevenDisplayNumberh:
-			  Number=((uint32_t )cMessage[port - 1][shift] ) + ((int32_t )cMessage[port - 1][1 + shift] << 8) + ((int32_t )cMessage[port - 1][2 + shift] << 16) + ((int32_t )cMessage[port - 1][3 + shift] << 24);
+			  Number=(uint32_t )cMessage[port - 1][shift];
 			  SevenDisplayNumberh(Number);
 		  break;
 	case CODE_H3BR2_SevenDisplayOneNumber:
-		  Number=((uint32_t )cMessage[port - 1][shift] ) + ((int32_t )cMessage[port - 1][1 + shift] << 8) + ((int32_t )cMessage[port - 1][2 + shift] << 16) + ((int32_t )cMessage[port - 1][3 + shift] << 24);
-		  StartSevSeg=(uint8_t)cMessage[port - 1][4+shift];
+		  Number=(uint32_t )cMessage[port - 1][shift];
+		  StartSevSeg=(uint32_t )cMessage[port - 1][shift+1];
 		  SevenDisplayOneNumber(Number, StartSevSeg);
 		  break;
 	case CODE_H3BR2_SevenDisplayOneNumberh:
-			  Number=((uint32_t )cMessage[port - 1][shift] ) + ((int32_t )cMessage[port - 1][1 + shift] << 8) + ((int32_t )cMessage[port - 1][2 + shift] << 16) + ((int32_t )cMessage[port - 1][3 + shift] << 24);
-			  StartSevSeg=(uint8_t)cMessage[port - 1][4+shift];
+			  Number=(uint32_t )cMessage[port - 1][shift];
+			  StartSevSeg=(uint32_t )cMessage[port - 1][shift+1];
 			  SevenDisplayOneNumberh(Number, StartSevSeg);
 			  break;
 	case CODE_H3BR2_SevenDisplayOff:
