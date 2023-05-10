@@ -120,11 +120,9 @@
 #define B_Pin GPIO_PIN_9
 #define B_GPIO_Port GPIOB
 
-
 /* Module-specific Definitions */
 
 #define NUM_MODULE_PARAMS						1
-
 /* Module EEPROM Variables */
 
 // Module Addressing Space 500 - 599
