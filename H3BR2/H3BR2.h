@@ -200,20 +200,20 @@ void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 
 extern Module_Status SevenDisplayNumber(uint32_t Number);
-extern Module_Status SevenDisplayNumberh( uint32_t Hexadecimal);
+extern Module_Status SevenDisplayNumberHexa( uint32_t Hexadecimal);
 extern Module_Status SevenDisplayOff(void);
-extern Module_Status SevenDisplayOneNumber(uint32_t Number, uint8_t StartSevSeg);
-extern Module_Status SevenDisplayOneNumberh(uint32_t Number, uint8_t StartSevSeg);
+extern Module_Status SevenDisplayOnDigit(uint32_t Number, uint8_t StartSevSeg);
+extern Module_Status SevenDisplayOnDigitHexa(uint32_t Number, uint8_t StartSevSeg);
 
 /* -----------------------------------------------------------------------
  |								Commands							      |															 	|
 /* -----------------------------------------------------------------------
  */
-extern const CLI_Command_Definition_t CLI_SevenDisplayNumberCommandCommandDefinition;
-extern const CLI_Command_Definition_t CLI_SevenDisplayNumberhCommandDefinition;
+extern const CLI_Command_Definition_t CLI_SevenDisplayNumberCommandDefinition;
+extern const CLI_Command_Definition_t CLI_SevenDisplayNumberHexaCommandDefinition;
 extern const CLI_Command_Definition_t CLI_SevenDisplayOffCommandDefinition;
-extern const CLI_Command_Definition_t CLI_SevenDisplayOneNumberCommandCommandDefinition;
-extern const CLI_Command_Definition_t CLI_SevenDisplayOneNumberhCommandCommandDefinition;
+extern const CLI_Command_Definition_t CLI_SevenDisplayOnDigitCommandDefinition;
+extern const CLI_Command_Definition_t CLI_SevenDisplayOnDigitHexaCommandDefinition;
 
 
 /* -----------------------------------------------------------------------*/

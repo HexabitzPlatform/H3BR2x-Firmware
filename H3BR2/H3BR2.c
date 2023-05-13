@@ -47,9 +47,9 @@ void FLASH_Page_Eras(uint32_t Addr );
 /* Create CLI commands --------------------------------------------------------*/
 portBASE_TYPE CLI_SevenDisplayNumberCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 portBASE_TYPE CLI_SevenDisplayOffCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_SevenDisplayNumberhCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_SevenDisplayOneNumberCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_SevenDisplayOneNumberhCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+portBASE_TYPE CLI_SevenDisplayNumberHexaCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+portBASE_TYPE CLI_SevenDisplayOnDigitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+portBASE_TYPE CLI_SevenDisplayOnDigitHexaCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 /*-----------------------------------------------------------*/
 /* CLI command structure : SevenDisplayNumber */
 const CLI_Command_Definition_t CLI_SevenDisplayNumberCommandDefinition =
@@ -61,11 +61,11 @@ const CLI_Command_Definition_t CLI_SevenDisplayNumberCommandDefinition =
 };
 //*************************************************************
 /* CLI command structure : SevenDisplayNumberh */
-const CLI_Command_Definition_t CLI_SevenDisplayNumberhCommandDefinition =
+const CLI_Command_Definition_t CLI_SevenDisplayNumberHexaCommandDefinition =
 {
-	 "sevendisplaynumberh", /* The command string to type. */
-	( const int8_t * ) "sevendisplaynumberh:\r\n Parameters required to execute a SevenDisplayNumber: Number  \r\n\r\n",
-	CLI_SevenDisplayNumberhCommand, /* The function to run. */
+	 "SevenDisplayNumberHexa", /* The command string to type. */
+	( const int8_t * ) "SevenDisplayNumberHexa:\r\n Parameters required to execute a SevenDisplayNumber: Number  \r\n\r\n",
+	CLI_SevenDisplayNumberHexaCommand, /* The function to run. */
 	1 /* one parameter is expected. */
 };
 //******************************************************************
@@ -81,20 +81,20 @@ const CLI_Command_Definition_t CLI_SevenDisplayOffCommandDefinition =
 //***********************************************************************
 
 /* CLI command structure : SevenDisplayoneNumbercommand */
-const CLI_Command_Definition_t CLI_SevenDisplayOneNumberCommandDefinition =
+const CLI_Command_Definition_t CLI_SevenDisplayOnDigitCommandDefinition =
 {
-		( const int8_t * ) "sevendisplayonenumber", /* The command string to type. */
-			( const int8_t * ) "sevendisplayonenumber:\r\n Parameters required to execute a SevenDisplayNumber: Number , StartSevSeg \r\n\r\n",
-			CLI_SevenDisplayOneNumberCommand, /* The function to run. */
+		( const int8_t * ) "SevenDisplayOnDigit", /* The command string to type. */
+			( const int8_t * ) "SevenDisplayOnDigit:\r\n Parameters required to execute a SevenDisplayNumber: Number , StartSevSeg \r\n\r\n",
+			CLI_SevenDisplayOnDigitCommand, /* The function to run. */
 			2 /* two parameters are expected. */
 };
 //***********************************************************************
 /* CLI command structure : SevenDisplayoneNumberhcommand */
-const CLI_Command_Definition_t CLI_SevenDisplayOneNumberhCommandDefinition =
+const CLI_Command_Definition_t CLI_SevenDisplayOnDigitHexaCommandDefinition =
 {
-		( const int8_t * ) "sevendisplayonenumberh", /* The command string to type. */
-			( const int8_t * ) "sevendisplayonenumberh:\r\n Parameters required to execute a SevenDisplayNumber: Number , StartSevSeg \r\n\r\n",
-			CLI_SevenDisplayOneNumberhCommand, /* The function to run. */
+		( const int8_t * ) "SevenDisplayOnDigitHexa", /* The command string to type. */
+			( const int8_t * ) "SevenDisplayOnDigitHexa:\r\n Parameters required to execute a SevenDisplayNumber: Number , StartSevSeg \r\n\r\n",
+			CLI_SevenDisplayOnDigitHexaCommand, /* The function to run. */
 			2 /* two parameters are expected. */
 };
 /* -----------------------------------------------------------------------
@@ -747,19 +747,19 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 		  Number=(uint32_t )cMessage[port - 1][shift];
 		  SevenDisplayNumber(Number);
 		  break;
-	case CODE_H3BR2_SevenDisplayNumberh:
+	case CODE_H3BR2_SevenDisplayNumberHexa:
 			  Number=(uint32_t )cMessage[port - 1][shift];
-			  SevenDisplayNumberh(Number);
+			  SevenDisplayNumberHexa(Number);
 		  break;
-	case CODE_H3BR2_SevenDisplayOneNumber:
+	case CODE_H3BR2_SevenDisplayOnDigit:
 		  Number=(uint32_t )cMessage[port - 1][shift];
 		  StartSevSeg=(uint32_t )cMessage[port - 1][shift+1];
-		  SevenDisplayOneNumber(Number, StartSevSeg);
+		  SevenDisplayOnDigit(Number, StartSevSeg);
 		  break;
-	case CODE_H3BR2_SevenDisplayOneNumberh:
+	case CODE_H3BR2_SevenDisplayOnDigitHexa:
 			  Number=(uint32_t )cMessage[port - 1][shift];
 			  StartSevSeg=(uint32_t )cMessage[port - 1][shift+1];
-			  SevenDisplayOneNumberh(Number, StartSevSeg);
+			  SevenDisplayOnDigitHexa(Number, StartSevSeg);
 			  break;
 	case CODE_H3BR2_SevenDisplayOff:
 			  SevenDisplayOff();
@@ -799,9 +799,9 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 void RegisterModuleCLICommands(void){
 	 FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayNumberCommandDefinition);
 	 FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayOffCommandDefinition);
-	 FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayNumberhCommandDefinition);
-	 FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayOneNumberCommandDefinition);
-	 FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayOneNumberhCommandDefinition);
+	 FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayNumberHexaCommandDefinition);
+	 FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayOnDigitCommandDefinition);
+	 FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayOnDigitHexaCommandDefinition);
 
 }
 
@@ -863,7 +863,7 @@ Module_Status SevenDisplayNumber(uint32_t Number)
 
 }
 /*-----------------------------------------------------------*/
-Module_Status SevenDisplayNumberh( uint32_t Hexadecimal)
+Module_Status SevenDisplayNumberHexa( uint32_t Hexadecimal)
 {
    	Module_Status status = H3BR2_OK;
 	clear_all_digits();   //Seven segment display off
@@ -885,7 +885,7 @@ return status ;
 
 }
 /*-----------------------------------------------------------*/
-Module_Status SevenDisplayOneNumber(uint32_t Number, uint8_t StartSevSeg)
+Module_Status SevenDisplayOnDigit(uint32_t Number, uint8_t StartSevSeg)
 {
 	Module_Status status = H3BR2_OK;
 	clear_all_digits();   //Seven segment display off
@@ -922,7 +922,7 @@ Module_Status SevenDisplayOneNumber(uint32_t Number, uint8_t StartSevSeg)
 
 }
 /* ----------------------------------------------------------------------------*/
-Module_Status SevenDisplayOneNumberh(uint32_t Hexadecimal, uint8_t StartSevSeg)
+Module_Status SevenDisplayOnDigitHexa(uint32_t Hexadecimal, uint8_t StartSevSeg)
 {
 	Module_Status status = H3BR2_OK;
 	clear_all_digits();   //Seven segment display off
@@ -1017,7 +1017,7 @@ portBASE_TYPE CLI_SevenDisplayNumberCommand( int8_t *pcWriteBuffer, size_t xWrit
 }
 
 /* ----------------------------------------------------------------------------*/
-portBASE_TYPE CLI_SevenDisplayNumberhCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+portBASE_TYPE CLI_SevenDisplayNumberHexaCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H3BR2_OK;
 	char* Sentence=NULL;
 	uint32_t hexacode;
@@ -1040,7 +1040,7 @@ for(int i=0 ; i<2;i++)
 }
 hexacode=hexadigit[0]*16 +hexadigit[1] ;
 
-		status=SevenDisplayNumberh(hexacode);
+		status=SevenDisplayNumberHexa(hexacode);
 
 		if(status == H3BR2_OK)
 		{
@@ -1082,10 +1082,10 @@ portBASE_TYPE CLI_SevenDisplayOffCommand( int8_t *pcWriteBuffer, size_t xWriteBu
 
 }
 /*-----------------------------------------------------------*/
-portBASE_TYPE CLI_SevenDisplayOneNumberCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+portBASE_TYPE CLI_SevenDisplayOnDigitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H3BR2_OK;
 	uint32_t Number;
-		//uint8_t StartSevSeg;
+		uint8_t StartSevSeg;
 	static int8_t *pcParameterString1;
 	static int8_t *pcParameterString2;
 	portBASE_TYPE xParameterStringLength1 =0;
@@ -1105,7 +1105,7 @@ portBASE_TYPE CLI_SevenDisplayOneNumberCommand( int8_t *pcWriteBuffer, size_t xW
 	pcParameterString2 =(int8_t* )FreeRTOS_CLIGetParameter(pcCommandString, 2, &xParameterStringLength2 );
 	StartSevSeg =(uint8_t )atol((char* )pcParameterString2);
 
-	status=SevenDisplayOneNumberh(Number,StartSevSeg);
+	status=SevenDisplayOnDigit(Number,StartSevSeg);
 
 	if(status == H3BR2_OK)
 	{
@@ -1126,7 +1126,7 @@ portBASE_TYPE CLI_SevenDisplayOneNumberCommand( int8_t *pcWriteBuffer, size_t xW
 
 /* ----------------------------------------------------------------------------*/
 /*-----------------------------------------------------------*/
-portBASE_TYPE CLI_SevenDisplayOneNumberhCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+portBASE_TYPE CLI_SevenDisplayOnDigitHexaCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H3BR2_OK;
 	char* letter=NULL;
 		uint32_t hexadigit;
@@ -1151,7 +1151,7 @@ portBASE_TYPE CLI_SevenDisplayOneNumberhCommand( int8_t *pcWriteBuffer, size_t x
 	hexadigit=get_hexadigit_code(letter[0]);
 
 
-	status=SevenDisplayOneNumberh(hexadigit,StartSevSeg);
+	status=SevenDisplayOnDigitHexa(hexadigit,StartSevSeg);
 
 	if(status == H3BR2_OK)
 	{
