@@ -1,8 +1,8 @@
 /*
- BitzOS (BOS) V0.2.9 - Copyright (C) 2017-2022 Hexabitz
+ BitzOS (BOS) V0.3.0 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
- File Name     : H3BR2_timers.c
+ File Name     : H3BR6_timers.c
  Description   : Peripheral timers setup source file.
 
  Required MCU resources :
@@ -20,7 +20,6 @@
 /*----------------------------------------------------------------------------*/
 
 /* Variables ---------------------------------------------------------*/
-GPIO_InitTypeDef GPIO_InitStruct = {0};
 //TIM_HandleTypeDef htim14; /* micro-second delay counter */
 TIM_HandleTypeDef htim16; /* micro-second delay counter */
 //TIM_HandleTypeDef htim15; /* milli-second delay counter */
@@ -63,7 +62,6 @@ void TIM_USEC_Init(void){
 
 }
 
-/*-----------------------------------------------------------*/
 
 /*-----------------------------------------------------------*/
 
@@ -137,3 +135,4 @@ void StartMilliDelay(uint16_t Delay){
 /*-----------------------------------------------------------*/
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+
