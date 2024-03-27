@@ -907,6 +907,7 @@ Module_Status SevenDisplayNumberF(float NumberF)
        Digit[i] = get_number_code(Number_int % 10);
         Number_int /= 10;
     }
+    HAL_Delay(5);
 
     return status;
 }
@@ -933,6 +934,7 @@ Module_Status SevenDisplayNumber(uint8_t Number)
 			Digit[i] = get_number_code(Number % 10);
 			Number /= 10;
 		}
+	HAL_Delay(5);
 	return status ;
 
 }
@@ -954,7 +956,7 @@ uint32_t high = (Hexadecimal & 0xf0) >> 4;
 
 	Digit[0] = get_number_code(low);
 	Digit[1] = get_number_code(high);
-
+	HAL_Delay(5);
 return status ;
 
 }
@@ -991,7 +993,7 @@ Module_Status SevenDisplayOneDigit(uint8_t Number, uint8_t StartSevSeg)
 
 
 
-
+	  HAL_Delay(5);
 	return status;
 
 }
@@ -1029,7 +1031,7 @@ Module_Status SevenDisplayOneDigitHexa(uint8_t Hexadecimal, uint8_t StartSevSeg)
 	        		Digit[1] =get_number_code(low);
 	     }
 
-
+		  HAL_Delay(5);
 	return status;
 
 }
