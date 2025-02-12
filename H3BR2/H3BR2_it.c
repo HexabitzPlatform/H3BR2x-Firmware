@@ -24,7 +24,7 @@ uint8_t* error_restart_message = "Restarting...\r\n";
 extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
 extern uint8_t UARTRxBufIndex[NumOfPorts];
 extern TIM_HandleTypeDef htim6; /* Timer for 7-segment (2 peices) */
-
+extern uint8_t WakeupFromStopFlag;
 /* External function prototypes ----------------------------------------------*/
 
 extern TaskHandle_t xCommandConsoleTaskHandle; // CLI Task handler.
@@ -310,6 +310,27 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
 	}
 }
 
+
+/*-----------------------------------------------------------*/
+/**
+  * @brief UART wakeup from Stop mode callback
+  * @param huart: uart handle
+  * @retval None
+  */
+void HAL_UARTEx_WakeupCallback(UART_HandleTypeDef *huart) {
+
+	WakeupFromStopFlag = 1;
+
+	if (huart->Instance == USART1)
+		HAL_UARTEx_DisableStopMode(huart);
+
+	if (huart->Instance == USART2)
+		HAL_UARTEx_DisableStopMode(huart);
+
+	if (huart->Instance == USART3)
+		HAL_UARTEx_DisableStopMode(huart);
+
+}
 /*-----------------------------------------------------------*/
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
