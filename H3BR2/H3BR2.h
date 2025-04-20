@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
  
  File Name     : H3BR2.h
@@ -13,11 +13,11 @@
 
  */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion ***********************************/
 #ifndef H3BR2_H
 #define H3BR2_H
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes ****************************************************************/
 #include "BOS.h"
 #include "H3BR2_MemoryMap.h"
 #include "H3BR2_uart.h"
@@ -39,11 +39,13 @@
 #define _P3
 #define _P4
 #define _P5
+#define _P6
 
 /* Define Available USARTs */
 #define _USART1
 #define _USART2
 #define _USART3
+#define _USART4
 #define _USART5
 #define _USART6
 
@@ -116,14 +118,13 @@
 #define B_GPIO_Port         GPIOB
 
 /* Indicator LED */
-#define _IND_LED_PORT			GPIOA
-#define _IND_LED_PIN			GPIO_PIN_11
+#define _IND_LED_PORT		GPIOA
+#define _IND_LED_PIN		GPIO_PIN_11
 
 /* Module-specific Macro Definitions ***************************************/
-
 #define NUM_MODULE_PARAMS						1
 
-
+/* Module-specific Type Definition *****************************************/
 /* Module_Status Type Definition */
 typedef enum {
 	H3BR2_OK =0,
@@ -132,39 +133,32 @@ typedef enum {
 	H3BR2_NUMBER_IS_OUT_OF_RANGE,
 	H3BR2_ERROR =255
 } Module_Status;
-// Encode  numbers
+
+/* Numbers / Letters Representations Type Definition */
 typedef enum{
-	zero_number=0xc0, one_number=0xf9, two_number=0xa4, three_number=0xb0, four_number=0x19, five_number=0x12, six_number=0x82, seven_number=0xf8, eight_number=0x80 ,nine_number=0x90,
+	/* Numbers Representation*/
+	ZERO_NUMBER=0xc0, ONE_NUMBER=0xf9, TWO_NUMBER=0xa4, THREE_NUMBER=0xb0, FOUR_NUMBER=0x19,
+	FIVE_NUMBER=0x12, SIX_NUMBER=0x82, SEVEN_NUMBER=0xf8, EIGHT_NUMBER=0x80 ,NINE_NUMBER=0x90,
 
-	a_letter=0xA0, b_letter=0x83, c_letter=0xA7, d_letter=0xA1, e_letter=0x86, f_letter=0x8E, g_letter=0x90, h_letter=0x8B, i_letter=0xEF, j_letter=0xE1,k_letter=0x8A,
+	/* Small Letter Representation*/
+	a_letter=0xA0, b_letter=0x83, c_letter=0xA7, d_letter=0xA1, e_letter=0x86, f_letter=0x8E,
+	g_letter=0x90, h_letter=0x8B, i_letter=0xEF, j_letter=0xE1, k_letter=0x8A, l_letter=0xC7,
+	m_letter=0xC8, n_letter=0xAB, o_letter=0xAB, p_letter=0x8C, q_letter=0x67, r_letter=0x50,
+	s_letter=0x93, t_letter=0x87, u_letter=0xE3, v_letter=0xC1, w_letter=0x81,x_letter=0x89,
+	y_letter=0x91, z_letter=0xE4,
 
-	l_letter=0xC7  , m_letter=0xC8,n_letter=0xAB, o_letter=0xAB, p_letter=0x8C, q_letter=0x67, r_letter=0x50, s_letter=0x93, t_letter=0x87, u_letter=0xE3,
+	/* Capital Letter Representation*/
+	A_LETTER=0x88, B_LETTER=0x83, C_LETTER=0xC6, D_LETTER=0xA1, E_LETTER=0x86, F_LETTER=0x8E,
+	G_letter=0xC2, H_letter=0x8B, I_letter=0xEF, J_letter=0xE1, K_letter=0x8A, L_letter=0xC7,
+	M_letter=0xC8, N_letter=0xAB, O_letter=0xA3, P_letter=0x8C, Q_letter=0x98, R_letter=0xAF,
+	S_letter=0x93, T_letter=0x87, U_letter=0xE3, V_letter=0xC1, W_letter=0x81, X_letter=0x89,
+	Y_letter=0x91, Z_letter=0xE4,
 
-	v_letter=0xC1, w_letter=0x81 ,x_letter=0x89,y_letter=0x91, z_letter=0xE4,
+	EMPTY = 0xff,
 
-	A_letter=0x88, B_letter=0x83 , C_letter=0xC6 , D_letter=0xA1, E_letter=0x86 , F_letter=0x8E , G_letter=0xC2 , H_letter=0x8B, I_letter=0xEF , J_letter=0xE1 ,K_letter=0x8A,
+	SYMBOL_MINUS=0x40
 
-	L_letter=0xC7  , M_letter=0xC8,N_letter=0xAB , O_letter=0xA3 , P_letter=0x8C ,  Q_letter=0x98 , R_letter=0xAF,  S_letter=0x93  ,T_letter=0x87, U_letter=0xE3,
-
-	V_letter=0xC1 ,W_letter=0x81 , X_letter=0x89 ,Y_letter=0x91 , Z_letter=0xE4  ,
-
-	Empty = 0xff,
-
-	Symbol_minus=0x40
-
-} Segment_Codes;
-
-extern uint8_t  test;
-extern int32_t Number;
-
-
-
-extern Segment_Codes Digit[2]; //Digit[0]: LSD, Digit[1]: MSD
-extern   char letter[2];
-// declaration of private functions
-extern Segment_Codes get_number_code(uint8_t digit);
-extern Segment_Codes get_letter_code(char letter);
-extern Segment_Codes clear_all_digits(void);
+} SegmentCodes;
 
 
 /* Export UART variables */
@@ -183,36 +177,20 @@ extern void MX_USART4_UART_Init(void);
 extern void MX_USART5_UART_Init(void);
 extern void MX_USART6_UART_Init(void);
 extern void SystemClock_Config(void);
-extern void ExecuteMonitor(void);
 
-/* -----------------------------------------------------------------------
- |								  APIs							          |  																 	|
-/* -----------------------------------------------------------------------
- */
+/***************************************************************************/
+/***************************** General Functions ***************************/
+/***************************************************************************/
+Module_Status SevenDisplayOff(void);
+Module_Status SevenDisplayNumber(uint8_t Number);
+Module_Status SevenDisplayNumberF(float NumberF);
+Module_Status SevenDisplayNumberHexa( uint8_t Hexadecimal);
+Module_Status SevenDisplayOneDigit(uint8_t Number, uint8_t StartSevSeg);
+Module_Status SevenDisplayOneDigitHexa(uint8_t Number, uint8_t StartSevSeg);
 
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
-void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
-extern Module_Status SevenDisplayNumberF(float NumberF);
-extern Module_Status SevenDisplayNumber(uint8_t Number);
-extern Module_Status SevenDisplayNumberHexa( uint8_t Hexadecimal);
-extern Module_Status SevenDisplayOff(void);
-extern Module_Status SevenDisplayOneDigit(uint8_t Number, uint8_t StartSevSeg);
-extern Module_Status SevenDisplayOneDigitHexa(uint8_t Number, uint8_t StartSevSeg);
-
-/* -----------------------------------------------------------------------
- |								Commands							      |															 	|
-/* -----------------------------------------------------------------------
- */
-extern const CLI_Command_Definition_t CLI_SevenDisplayNumberCommandDefinition;
-extern const CLI_Command_Definition_t CLI_SevenDisplayNumberFCommandDefinition;
-extern const CLI_Command_Definition_t CLI_SevenDisplayNumberHexaCommandDefinition;
-extern const CLI_Command_Definition_t CLI_SevenDisplayOffCommandDefinition;
-extern const CLI_Command_Definition_t CLI_SevenDisplayOnDigitCommandDefinition;
-extern const CLI_Command_Definition_t CLI_SevenDisplayOnDigitHexaCommandDefinition;
-
-
-/* -----------------------------------------------------------------------*/
+void RemoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 
 #endif /* H3BR2_H */
 
-/************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/
