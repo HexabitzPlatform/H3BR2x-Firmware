@@ -31,11 +31,10 @@ TimerHandle_t xTimerSwitch = NULL;
 SegmentCodes Digit[2] = {EMPTY,EMPTY};
 
 /* Private variables *******************************************************/
- char letter[2];
- int32_t Number;
- uint8_t StartSevSeg;
- uint8_t index_7_seg = 0;
- uint8_t flag_float=0;
+uint8_t StartSevSeg;
+uint8_t SevenSegIndex = 0;
+uint8_t FloatFlag = 0;
+int32_t Number = 0;
 
 /* Module Parameters */
 ModuleParam_t ModuleParam[NUM_MODULE_PARAMS] ={0};
@@ -62,55 +61,55 @@ portBASE_TYPE CLI_SevenDisplayOneDigitHexaCommand( int8_t *pcWriteBuffer, size_t
 /* CLI command structure ***************************************************/
 /* CLI command structure : SevenDisplayNumber */
 const CLI_Command_Definition_t CLI_SevenDisplayNumberCommandDefinition = {
-		(const int8_t*) "sevendisplaynumber", /* The command string to type. */
-		(const int8_t*) "sevendisplaynumber:\r\n Parameters required to execute a SevenDisplayNumber: Number  \r\n\r\n",
-		CLI_SevenDisplayNumberCommand, /* The function to run. */
-		1 /* one parameter is expected. */
+	(const int8_t*) "sevendisplaynumber", /* The command string to type. */
+	(const int8_t*) "sevendisplaynumber:\r\n Parameters required to execute a SevenDisplayNumber: Number  \r\n\r\n",
+	CLI_SevenDisplayNumberCommand, /* The function to run. */
+	1 /* one parameter is expected. */
 };
 
 /***************************************************************************/
 /* CLI command structure : SevenDisplayNumberF */
 const CLI_Command_Definition_t CLI_SevenDisplayNumberFCommandDefinition = {
-		(const int8_t*) "sevendisplaynumberf", /* The command string to type. */
-		(const int8_t*) "sevendisplaynumberf:\r\n Parameters required to execute a SevenDisplayNumberF: NumberF  \r\n\r\n",
-		CLI_SevenDisplayNumberFCommand, /* The function to run. */
-1 /* one parameter is expected. */
+	(const int8_t*) "sevendisplaynumberf", /* The command string to type. */
+	(const int8_t*) "sevendisplaynumberf:\r\n Parameters required to execute a SevenDisplayNumberF: NumberF  \r\n\r\n",
+	CLI_SevenDisplayNumberFCommand, /* The function to run. */
+    1 /* one parameter is expected. */
 };
 
 /***************************************************************************/
 /* CLI command structure : SevenDisplayNumberh */
 const CLI_Command_Definition_t CLI_SevenDisplayNumberHexaCommandDefinition = {
-		(const int8_t*) "sevendisplaynumberhexa", /* The command string to type. */
-		(const int8_t*) "sevendisplaynumberhexa:\r\n Parameters required to execute a SevenDisplayNumber: Number  \r\n\r\n",
-		CLI_SevenDisplayNumberHexaCommand, /* The function to run. */
-1 /* one parameter is expected. */
+	(const int8_t*) "sevendisplaynumberhexa", /* The command string to type. */
+	(const int8_t*) "sevendisplaynumberhexa:\r\n Parameters required to execute a SevenDisplayNumber: Number  \r\n\r\n",
+	CLI_SevenDisplayNumberHexaCommand, /* The function to run. */
+    1 /* one parameter is expected. */
 };
 
 /***************************************************************************/
 /* CLI command structure : SevenDisplayOff */
 const CLI_Command_Definition_t CLI_SevenDisplayOffCommandDefinition = {
-		(const int8_t*) "sevendisplayoff", /* The command string to type. */
-		(const int8_t*) "sevendisplayoff:\r\nParameters required to execute a SevenDisplayOff \r\n\r\n",
-		CLI_SevenDisplayOffCommand, /* The function to run. */
-0 /* zero parameters are expected. */
+	(const int8_t*) "sevendisplayoff", /* The command string to type. */
+	(const int8_t*) "sevendisplayoff:\r\nParameters required to execute a SevenDisplayOff \r\n\r\n",
+	CLI_SevenDisplayOffCommand, /* The function to run. */
+    0 /* zero parameters are expected. */
 };
 
 /***************************************************************************/
 /* CLI command structure : SevenDisplayoneNumbercommand */
 const CLI_Command_Definition_t CLI_SevenDisplayOneDigitCommandDefinition = {
-		(const int8_t*) "sevendisplayonedigit", /* The command string to type. */
-		(const int8_t*) "sevendisplayonedigit:\r\n Parameters required to execute a SevenDisplayNumber: Number , StartSevSeg \r\n\r\n",
-		CLI_SevenDisplayOneDigitCommand, /* The function to run. */
-		2 /* two parameters are expected. */
+	(const int8_t*) "sevendisplayonedigit", /* The command string to type. */
+	(const int8_t*) "sevendisplayonedigit:\r\n Parameters required to execute a SevenDisplayNumber: Number , StartSevSeg \r\n\r\n",
+	CLI_SevenDisplayOneDigitCommand, /* The function to run. */
+	2 /* two parameters are expected. */
 };
 
 /***************************************************************************/
 /* CLI command structure : SevenDisplayoneNumberhcommand */
 const CLI_Command_Definition_t CLI_SevenDisplayOneDigitHexaCommandDefinition = {
-		(const int8_t*) "sevendisplayonedigithexa", /* The command string to type. */
-		(const int8_t*) "sevendisplayonedigithexa:\r\n Parameters required to execute a SevenDisplayNumber: Number , StartSevSeg \r\n\r\n",
-		CLI_SevenDisplayOneDigitHexaCommand, /* The function to run. */
-		2 /* two parameters are expected. */
+	(const int8_t*) "sevendisplayonedigithexa", /* The command string to type. */
+	(const int8_t*) "sevendisplayonedigithexa:\r\n Parameters required to execute a SevenDisplayNumber: Number , StartSevSeg \r\n\r\n",
+	CLI_SevenDisplayOneDigitHexaCommand, /* The function to run. */
+	2 /* two parameters are expected. */
 };
 
 /***************************************************************************/
@@ -596,7 +595,7 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src,
 		break;
 
 	default:
-		result = H3BR2_ERR_UnknownMessage;
+		result = H3BR2_ERR_UNKNOWNMESSAGE;
 		break;
 	}
 
@@ -660,41 +659,41 @@ Module_Status GetModuleParameter(uint8_t paramIndex,float *value){
 /*Switch timer callback */
 void SwitchTimerCallback(TimerHandle_t xTimerSwitch) {
 
-	HAL_GPIO_WritePin(cc1_GPIO_Port, cc1_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(cc2_GPIO_Port, cc2_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(CC1_GPIO_PORT, CC1_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(CC2_GPIO_PORT, CC2_PIN, GPIO_PIN_RESET);
 
-	HAL_GPIO_WritePin(DP_GPIO_Port, DP_Pin, 1);
+	HAL_GPIO_WritePin(DP_GPIO_PORT, DP_PIN, 1);
 
-	HAL_GPIO_WritePin(A_GPIO_Port, A_Pin, Digit[index_7_seg] & 0b00000001);
-	HAL_GPIO_WritePin(B_GPIO_Port, B_Pin, Digit[index_7_seg] & 0b00000010);
-	HAL_GPIO_WritePin(C_GPIO_Port, C_Pin, Digit[index_7_seg] & 0b00000100);
-	HAL_GPIO_WritePin(D_GPIO_Port, D_Pin, Digit[index_7_seg] & 0b00001000);
-	HAL_GPIO_WritePin(E_GPIO_Port, E_Pin, Digit[index_7_seg] & 0b00010000);
-	HAL_GPIO_WritePin(F_GPIO_Port, F_Pin, Digit[index_7_seg] & 0b00100000);
-	HAL_GPIO_WritePin(G_GPIO_Port, G_Pin, Digit[index_7_seg] & 0b01000000);
+	HAL_GPIO_WritePin(A_GPIO_PORT, A_PIN, Digit[SevenSegIndex] & 0b00000001);
+	HAL_GPIO_WritePin(B_GPIO_PORT, B_PIN, Digit[SevenSegIndex] & 0b00000010);
+	HAL_GPIO_WritePin(C_GPIO_PORT, C_PIN, Digit[SevenSegIndex] & 0b00000100);
+	HAL_GPIO_WritePin(D_GPIO_PORT, D_PIN, Digit[SevenSegIndex] & 0b00001000);
+	HAL_GPIO_WritePin(E_GPIO_PORT, E_PIN, Digit[SevenSegIndex] & 0b00010000);
+	HAL_GPIO_WritePin(F_GPIO_PORT, F_PIN, Digit[SevenSegIndex] & 0b00100000);
+	HAL_GPIO_WritePin(G_GPIO_PORT, G_PIN, Digit[SevenSegIndex] & 0b01000000);
 
-	if (index_7_seg == 1 && flag_float == 1)
-		HAL_GPIO_WritePin(DP_GPIO_Port, DP_Pin, 0);
-	else if (index_7_seg == 0 && flag_float == 1) {
-		HAL_GPIO_WritePin(DP_GPIO_Port, DP_Pin, 1);
+	if (SevenSegIndex == 1 && FloatFlag == 1)
+		HAL_GPIO_WritePin(DP_GPIO_PORT, DP_PIN, 0);
+	else if (SevenSegIndex == 0 && FloatFlag == 1) {
+		HAL_GPIO_WritePin(DP_GPIO_PORT, DP_PIN, 1);
 	}
 
-	switch (index_7_seg) {
+	switch (SevenSegIndex) {
 	case 0:
-		HAL_GPIO_WritePin(cc2_GPIO_Port, cc2_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(CC2_GPIO_PORT, CC2_PIN, GPIO_PIN_SET);
 		break;
 
 	case 1:
-		HAL_GPIO_WritePin(cc1_GPIO_Port, cc1_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(CC1_GPIO_PORT, CC1_PIN, GPIO_PIN_SET);
 		break;
 
 	default:
 		break;
 	}
 
-	index_7_seg++;
-	if (index_7_seg > 1)
-		index_7_seg = 0;
+	SevenSegIndex++;
+	if (SevenSegIndex > 1)
+		SevenSegIndex = 0;
 
 }
 
@@ -877,7 +876,7 @@ uint32_t GetHexadigitCode(char Number) {
 /***************************************************************************/
 SegmentCodes ClearAllDigits(void) {
 	Module_Status status = H3BR2_OK;
-	flag_float = 0;
+	FloatFlag = 0;
 	for (int i = 0; i < 2; i++)
 		Digit[i] = EMPTY;
 }
@@ -891,7 +890,7 @@ Module_Status SevenDisplayNumberF(float NumberF) {
 
 	ClearAllDigits();
 
-	flag_float = 1;
+	FloatFlag = 1;
 	if (NumberF < 0 || NumberF > 9.9) {
 		status = H3BR2_NUMBER_IS_OUT_OF_RANGE;
 		return status;
@@ -957,7 +956,7 @@ Module_Status SevenDisplayOneDigit(uint8_t Number, uint8_t StartSevSeg) {
 	ClearAllDigits();   //Seven segment display off
 
 	if (!(StartSevSeg >= 0 && StartSevSeg <= 1)) {
-		status = H3BR2_ERR_WrongParams;
+		status = H3BR2_ERR_WRONGPARAMS;
 		return status;
 	}
 	if (Number > 9) {
@@ -990,7 +989,7 @@ Module_Status SevenDisplayOneDigitHexa(uint8_t Hexadecimal, uint8_t StartSevSeg)
 	low = Hexadecimal & 0x0f;
 
 	if (!(StartSevSeg >= 0 && StartSevSeg <= 1)) {
-		status = H3BR2_ERR_WrongParams;
+		status = H3BR2_ERR_WRONGPARAMS;
 		return status;
 	}
 	if (Number > 9) {
@@ -1047,7 +1046,7 @@ portBASE_TYPE CLI_SevenDisplayNumberCommand( int8_t *pcWriteBuffer, size_t xWrit
 
 	}
 
-	else if (status == H3BR2_ERR_WrongParams)
+	else if (status == H3BR2_ERR_WRONGPARAMS)
 		strcpy((char*) pcWriteBuffer, (char*) pcWrongParamsMessage);
 
 	else if (status == H3BR2_NUMBER_IS_OUT_OF_RANGE)
@@ -1085,7 +1084,7 @@ portBASE_TYPE CLI_SevenDisplayNumberFCommand( int8_t *pcWriteBuffer, size_t xWri
 
 	}
 
-	else if (status == H3BR2_ERR_WrongParams)
+	else if (status == H3BR2_ERR_WRONGPARAMS)
 		strcpy((char*) pcWriteBuffer, (char*) pcWrongParamsMessage);
 
 	else if (status == H3BR2_NUMBER_IS_OUT_OF_RANGE)
@@ -1127,7 +1126,7 @@ portBASE_TYPE CLI_SevenDisplayNumberHexaCommand(int8_t *pcWriteBuffer, size_t xW
 				Sentence[1]);
 	}
 
-	else if (status == H3BR2_ERR_WrongParams)
+	else if (status == H3BR2_ERR_WRONGPARAMS)
 		strcpy((char*) pcWriteBuffer, (char*) pcWrongParamsMessage);
 
 	else if (status == H3BR2_NUMBER_IS_OUT_OF_RANGE)
@@ -1190,7 +1189,7 @@ portBASE_TYPE CLI_SevenDisplayOneDigitCommand( int8_t *pcWriteBuffer, size_t xWr
 
 	}
 
-	else if (status == H3BR2_ERR_WrongParams)
+	else if (status == H3BR2_ERR_WRONGPARAMS)
 		strcpy((char*) pcWriteBuffer, (char*) pcWrongParamsMessage);
 
 	else if (status == H3BR2_NUMBER_IS_OUT_OF_RANGE)
@@ -1231,7 +1230,7 @@ portBASE_TYPE CLI_SevenDisplayOneDigitHexaCommand( int8_t *pcWriteBuffer, size_t
 
 	}
 
-	else if (status == H3BR2_ERR_WrongParams)
+	else if (status == H3BR2_ERR_WRONGPARAMS)
 		strcpy((char*) pcWriteBuffer, (char*) pcWrongParamsMessage);
 
 	else if (status == H3BR2_NUMBER_IS_OUT_OF_RANGE)

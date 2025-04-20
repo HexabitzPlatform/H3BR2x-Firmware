@@ -96,40 +96,40 @@
 #define	USART6_AF			GPIO_AF3_USART6
 
 /* Pins For Seven Segment */
-#define cc1_Pin             GPIO_PIN_13
-#define cc1_GPIO_Port       GPIOC
-#define cc2_Pin             GPIO_PIN_14
-#define cc2_GPIO_Port       GPIOC
-#define E_Pin               GPIO_PIN_1
-#define E_GPIO_Port         GPIOB
-#define C_Pin               GPIO_PIN_2
-#define C_GPIO_Port         GPIOB
-#define F_Pin               GPIO_PIN_8
-#define F_GPIO_Port         GPIOA
-#define G_Pin               GPIO_PIN_12
-#define G_GPIO_Port         GPIOA
-#define D_Pin               GPIO_PIN_1
-#define D_GPIO_Port         GPIOD
-#define A_Pin               GPIO_PIN_5
-#define A_GPIO_Port         GPIOB
-#define DP_Pin              GPIO_PIN_8
-#define DP_GPIO_Port        GPIOB
-#define B_Pin               GPIO_PIN_9
-#define B_GPIO_Port         GPIOB
+#define CC1_PIN             GPIO_PIN_13
+#define CC1_GPIO_PORT       GPIOC
+#define CC2_PIN             GPIO_PIN_14
+#define CC2_GPIO_PORT       GPIOC
+#define E_PIN               GPIO_PIN_1
+#define E_GPIO_PORT         GPIOB
+#define C_PIN               GPIO_PIN_2
+#define C_GPIO_PORT         GPIOB
+#define F_PIN               GPIO_PIN_8
+#define F_GPIO_PORT         GPIOA
+#define G_PIN               GPIO_PIN_12
+#define G_GPIO_PORT         GPIOA
+#define D_PIN               GPIO_PIN_1
+#define D_GPIO_PORT         GPIOD
+#define A_PIN               GPIO_PIN_5
+#define A_GPIO_PORT         GPIOB
+#define DP_PIN              GPIO_PIN_8
+#define DP_GPIO_PORT        GPIOB
+#define B_PIN               GPIO_PIN_9
+#define B_GPIO_PORT         GPIOB
 
 /* Indicator LED */
 #define _IND_LED_PORT		GPIOA
 #define _IND_LED_PIN		GPIO_PIN_11
 
 /* Module-specific Macro Definitions ***************************************/
-#define NUM_MODULE_PARAMS						1
+#define NUM_MODULE_PARAMS	1
 
 /* Module-specific Type Definition *****************************************/
 /* Module_Status Type Definition */
 typedef enum {
 	H3BR2_OK =0,
-	H3BR2_ERR_UnknownMessage,
-	H3BR2_ERR_WrongParams,
+	H3BR2_ERR_UNKNOWNMESSAGE,
+	H3BR2_ERR_WRONGPARAMS,
 	H3BR2_NUMBER_IS_OUT_OF_RANGE,
 	H3BR2_ERROR =255
 } Module_Status;
@@ -137,29 +137,28 @@ typedef enum {
 /* Numbers / Letters Representations Type Definition */
 typedef enum{
 	/* Numbers Representation*/
-	ZERO_NUMBER=0xc0, ONE_NUMBER=0xf9, TWO_NUMBER=0xa4, THREE_NUMBER=0xb0, FOUR_NUMBER=0x19,
-	FIVE_NUMBER=0x12, SIX_NUMBER=0x82, SEVEN_NUMBER=0xf8, EIGHT_NUMBER=0x80 ,NINE_NUMBER=0x90,
+	ZERO_NUMBER = 0XC0, ONE_NUMBER = 0XF9, TWO_NUMBER = 0XA4, THREE_NUMBER = 0XB0, FOUR_NUMBER = 0X19,
+	FIVE_NUMBER = 0X12, SIX_NUMBER = 0X82, SEVEN_NUMBER = 0XF8, EIGHT_NUMBER = 0X80 ,NINE_NUMBER = 0X90,
 
 	/* Small Letter Representation*/
-	a_letter=0xA0, b_letter=0x83, c_letter=0xA7, d_letter=0xA1, e_letter=0x86, f_letter=0x8E,
-	g_letter=0x90, h_letter=0x8B, i_letter=0xEF, j_letter=0xE1, k_letter=0x8A, l_letter=0xC7,
-	m_letter=0xC8, n_letter=0xAB, o_letter=0xAB, p_letter=0x8C, q_letter=0x67, r_letter=0x50,
-	s_letter=0x93, t_letter=0x87, u_letter=0xE3, v_letter=0xC1, w_letter=0x81,x_letter=0x89,
-	y_letter=0x91, z_letter=0xE4,
+	a_LETTER = 0xA0, b_LETTER = 0x83, c_LETTER = 0xA7, d_LETTER = 0xA1, e_LETTER = 0x86, f_LETTER = 0x8E,
+	g_LETTER = 0x90, h_LETTER = 0x8B, i_LETTER = 0xEF, j_LETTER = 0xE1, k_LETTER = 0x8A, l_LETTER = 0xC7,
+	m_LETTER = 0xC8, n_LETTER = 0xAB, o_LETTER = 0xAB, p_LETTER = 0x8C, q_LETTER = 0x67, r_LETTER = 0x50,
+	s_LETTER = 0x93, t_LETTER = 0x87, u_LETTER = 0xE3, v_LETTER = 0xC1, w_LETTER = 0x81, x_LETTER = 0x89,
+	y_LETTER = 0x91, z_LETTER = 0xE4,
 
 	/* Capital Letter Representation*/
-	A_LETTER=0x88, B_LETTER=0x83, C_LETTER=0xC6, D_LETTER=0xA1, E_LETTER=0x86, F_LETTER=0x8E,
-	G_letter=0xC2, H_letter=0x8B, I_letter=0xEF, J_letter=0xE1, K_letter=0x8A, L_letter=0xC7,
-	M_letter=0xC8, N_letter=0xAB, O_letter=0xA3, P_letter=0x8C, Q_letter=0x98, R_letter=0xAF,
-	S_letter=0x93, T_letter=0x87, U_letter=0xE3, V_letter=0xC1, W_letter=0x81, X_letter=0x89,
-	Y_letter=0x91, Z_letter=0xE4,
+	A_LETTER =0X88, B_LETTER = 0X83, C_LETTER = 0XC6, D_LETTER = 0XA1, E_LETTER = 0X86, F_LETTER = 0X8E,
+	G_LETTER =0XC2, H_LETTER = 0X8B, I_LETTER = 0XEF, J_LETTER = 0XE1, K_LETTER = 0X8A, L_LETTER = 0XC7,
+	M_LETTER =0XC8, N_LETTER = 0XAB, O_LETTER = 0XA3, P_LETTER = 0X8C, Q_LETTER = 0X98, R_LETTER = 0XAF,
+	S_LETTER =0X93, T_LETTER = 0X87, U_LETTER = 0XE3, V_LETTER = 0XC1, W_LETTER = 0X81, X_LETTER = 0X89,
+	Y_LETTER =0X91, Z_LETTER = 0XE4,
 
-	EMPTY = 0xff,
+	EMPTY = 0XFF,
 
-	SYMBOL_MINUS=0x40
+	SYMBOL_MINUS = 0X40
 
 } SegmentCodes;
-
 
 /* Export UART variables */
 extern UART_HandleTypeDef huart1;

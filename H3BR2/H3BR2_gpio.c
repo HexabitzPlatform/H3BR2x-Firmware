@@ -38,44 +38,44 @@ void SevenSegGPIOInit(void) {
 	__HAL_RCC_GPIOD_CLK_ENABLE();
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOC, cc1_Pin | cc2_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC, CC1_PIN | CC2_PIN, GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOB, E_Pin | C_Pin | A_Pin | DP_Pin | B_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, E_PIN | C_PIN | A_PIN | DP_PIN | B_PIN, GPIO_PIN_SET);
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOA, F_Pin | G_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, F_PIN | G_PIN, GPIO_PIN_SET);
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(D_GPIO_Port, D_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(D_GPIO_PORT, D_PIN, GPIO_PIN_SET);
 
 	/*Configure GPIO pins : PCPin PCPin */
-	GPIO_InitStruct.Pin = cc1_Pin | cc2_Pin;
+	GPIO_InitStruct.Pin = CC1_PIN | CC2_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 	/*Configure GPIO pins : PBPin PBPin PBPin PBPin PBPin */
-	GPIO_InitStruct.Pin = E_Pin | C_Pin | A_Pin | DP_Pin | B_Pin;
+	GPIO_InitStruct.Pin = E_PIN | C_PIN | A_PIN | DP_PIN | B_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	/*Configure GPIO pins : PAPin PAPin */
-	GPIO_InitStruct.Pin = F_Pin | G_Pin;
+	GPIO_InitStruct.Pin = F_PIN | G_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 	/*Configure GPIO pin : PtPin */
-	GPIO_InitStruct.Pin = D_Pin;
+	GPIO_InitStruct.Pin = D_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	HAL_GPIO_Init(D_GPIO_Port, &GPIO_InitStruct);
+	HAL_GPIO_Init(D_GPIO_PORT, &GPIO_InitStruct);
 
 }
 
