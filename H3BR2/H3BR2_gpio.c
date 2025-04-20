@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
  File Name     : H3BR2_gpio.c
@@ -7,106 +7,97 @@
 
  */
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes ****************************************************************/
 #include "BOS.h"
 
-/*  */
-BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin);
+/***************************************************************************/
+/* Configure GPIO **********************************************************/
+/***************************************************************************/
 
-/*----------------------------------------------------------------------------*/
-/* Configure GPIO                                                             */
-/*----------------------------------------------------------------------------*/
-
-/** Pinout Configuration
- */
+/* Pinout Configuration */
 void GPIO_Init(void){
 	/* GPIO Ports Clock Enable */
 	__GPIOC_CLK_ENABLE();
 	__GPIOA_CLK_ENABLE();
 	__GPIOD_CLK_ENABLE();
 	__GPIOB_CLK_ENABLE();
-	__GPIOF_CLK_ENABLE();		// for HSE and Boot0
+	__GPIOF_CLK_ENABLE();		/* for HSE and Boot0 */
 	
 	IND_LED_Init();
 }
-void MX_GPIO_Init(void)
-{
 
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
+/***************************************************************************/
+void SevenSegGPIOInit(void) {
 
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
+	GPIO_InitTypeDef GPIO_InitStruct = { 0 };
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, cc1_Pin|cc2_Pin, GPIO_PIN_RESET);
+	/* GPIO Ports Clock Enable */
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	__HAL_RCC_GPIOD_CLK_ENABLE();
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, E_Pin|C_Pin|A_Pin|DP_Pin |B_Pin, GPIO_PIN_SET);
+	/*Configure GPIO pin Output Level */
+	HAL_GPIO_WritePin(GPIOC, cc1_Pin | cc2_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, F_Pin|G_Pin, GPIO_PIN_SET);
+	/*Configure GPIO pin Output Level */
+	HAL_GPIO_WritePin(GPIOB, E_Pin | C_Pin | A_Pin | DP_Pin | B_Pin, GPIO_PIN_SET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(D_GPIO_Port, D_Pin, GPIO_PIN_SET);
+	/*Configure GPIO pin Output Level */
+	HAL_GPIO_WritePin(GPIOA, F_Pin | G_Pin, GPIO_PIN_SET);
 
-  /*Configure GPIO pins : PCPin PCPin */
-  GPIO_InitStruct.Pin = cc1_Pin|cc2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+	/*Configure GPIO pin Output Level */
+	HAL_GPIO_WritePin(D_GPIO_Port, D_Pin, GPIO_PIN_SET);
 
-  /*Configure GPIO pins : PBPin PBPin PBPin PBPin
-                           PBPin */
-  GPIO_InitStruct.Pin = E_Pin|C_Pin|A_Pin|DP_Pin
-                          |B_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	/*Configure GPIO pins : PCPin PCPin */
+	GPIO_InitStruct.Pin = cc1_Pin | cc2_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PAPin PAPin */
-  GPIO_InitStruct.Pin = F_Pin|G_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+	/*Configure GPIO pins : PBPin PBPin PBPin PBPin PBPin */
+	GPIO_InitStruct.Pin = E_Pin | C_Pin | A_Pin | DP_Pin | B_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PtPin */
-  GPIO_InitStruct.Pin = D_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(D_GPIO_Port, &GPIO_InitStruct);
+	/*Configure GPIO pins : PAPin PAPin */
+	GPIO_InitStruct.Pin = F_Pin | G_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	/*Configure GPIO pin : PtPin */
+	GPIO_InitStruct.Pin = D_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(D_GPIO_Port, &GPIO_InitStruct);
 
 }
 
-
-//-- Configure indicator LED
-void IND_LED_Init(void){
+/***************************************************************************/
+/* Configure indicator LED */
+void IND_LED_Init(void) {
 	GPIO_InitTypeDef GPIO_InitStruct;
-	
+
 	GPIO_InitStruct.Pin = _IND_LED_PIN;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-	HAL_GPIO_Init(_IND_LED_PORT,&GPIO_InitStruct);
+	HAL_GPIO_Init(_IND_LED_PORT, &GPIO_InitStruct);
 }
 
-/*-----------------------------------------------------------*/
-
-/* --- Check for factory reset condition: 
- - P1 TXD is connected to last port RXD    
- */
+/***************************************************************************/
+/* Check for factory reset condition:
+ - P1 TXD is connected to last port RXD  */
 uint8_t IsFactoryReset(void){
 	GPIO_InitTypeDef GPIO_InitStruct;
 	uint32_t P1_TX_Port, P1_RX_Port, P_last_TX_Port, P_last_RX_Port;
 	uint16_t P1_TX_Pin, P1_RX_Pin, P_last_TX_Pin, P_last_RX_Pin;
-	
-	/* -- Setup GPIOs -- */
 
 	/* Enable all GPIO Ports Clocks */
 	__GPIOA_CLK_ENABLE();
@@ -148,10 +139,8 @@ uint8_t IsFactoryReset(void){
 	return 0;
 }
 
-/*-----------------------------------------------------------*/
-
-/* --- Get GPIO pins and ports of this array port
- */
+/***************************************************************************/
+/* Get GPIO pins and ports of this array port */
 BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin){
 	BOS_Status result =BOS_OK;
 	
@@ -159,14 +148,14 @@ BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t
 	UART_HandleTypeDef *huart =GetUart(port);
 	
 	if(huart == &huart1){
-#ifdef _Usart1		
+#ifdef _USART1
 		*TX_Port =(uint32_t ) USART1_TX_PORT;
 		*TX_Pin = USART1_TX_PIN;
 		*RX_Port =(uint32_t ) USART1_RX_PORT;
 		*RX_Pin = USART1_RX_PIN;
 #endif
 	}
-#ifdef _Usart2	
+#ifdef _USART2
 	else if(huart == &huart2){
 		*TX_Port =(uint32_t ) USART2_TX_PORT;
 		*TX_Pin = USART2_TX_PIN;
@@ -174,7 +163,7 @@ BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t
 		*RX_Pin = USART2_RX_PIN;
 	}
 #endif
-#ifdef _Usart3	
+#ifdef _USART3
 	else if(huart == &huart3){
 		*TX_Port =(uint32_t ) USART3_TX_PORT;
 		*TX_Pin = USART3_TX_PIN;
@@ -182,7 +171,7 @@ BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t
 		*RX_Pin = USART3_RX_PIN;
 	}
 #endif
-#ifdef _Usart4
+#ifdef _USART4
 	else if(huart == &huart4){
 		*TX_Port =(uint32_t ) USART4_TX_PORT;
 		*TX_Pin = USART4_TX_PIN;
@@ -190,7 +179,7 @@ BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t
 		*RX_Pin = USART4_RX_PIN;
 	}
 #endif
-#ifdef _Usart5	
+#ifdef _USART5
 	else if(huart == &huart5){
 		*TX_Port =(uint32_t ) USART5_TX_PORT;
 		*TX_Pin = USART5_TX_PIN;
@@ -198,7 +187,7 @@ BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t
 		*RX_Pin = USART5_RX_PIN;
 	}
 #endif
-#ifdef _Usart6	
+#ifdef _USART6
 	else if(huart == &huart6){
 		*TX_Port =(uint32_t ) USART6_TX_PORT;
 		*TX_Pin = USART6_TX_PIN;
@@ -206,7 +195,7 @@ BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t
 		*RX_Pin = USART6_RX_PIN;
 	}
 #endif
-#ifdef _Usart7
+#ifdef _USART7
 	else if (huart == &huart7) 
 	{		
 		*TX_Port = (uint32_t)USART7_TX_PORT;
@@ -215,7 +204,7 @@ BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t
 		*RX_Pin = USART7_RX_PIN;
 	} 
 #endif
-#ifdef _Usart8	
+#ifdef _USART8
 	else if (huart == &huart8) 
 	{	
 		*TX_Port = (uint32_t)USART8_TX_PORT;
@@ -230,4 +219,5 @@ BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t
 	return result;
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/***************************************************************************/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

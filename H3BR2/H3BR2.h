@@ -25,43 +25,37 @@
 #include "H3BR2_dma.h"
 #include "H3BR2_inputs.h"
 #include "H3BR2_eeprom.h"
-/* Exported definitions -------------------------------------------------------*/
 
-#define	modulePN		_H3BR2
+/* Exported Macros *********************************************************/
+#define	MODULE_PN		_H3BR2
 
-
-/* Port-related definitions */
-#define	NumOfPorts			6
-
-#define P_PROG 				P2						/* ST factory bootloader UART */
+/* Port-related Definitions */
+#define	NUM_OF_PORTS	5
+#define P_PROG 			P2		/* ST factory bootloader UART */
 
 /* Define available ports */
-#define _P1 
-#define _P2 
-#define _P3 
-#define _P4 
-#define _P5 
-#define _P6
+#define _P1
+#define _P2
+#define _P3
+#define _P4
+#define _P5
 
-/* Define available USARTs */
-#define _Usart1 1
-#define _Usart2 1
-#define _Usart3 1
-#define _Usart4 1
-#define _Usart5 1
-#define _Usart6	1
-
+/* Define Available USARTs */
+#define _USART1
+#define _USART2
+#define _USART3
+#define _USART5
+#define _USART6
 
 /* Port-UART mapping */
+#define UART_P1 &huart4
+#define UART_P2 &huart2
+#define UART_P3 &huart6
+#define UART_P4 &huart3
+#define UART_P5 &huart1
+#define UART_P6 &huart5
 
-#define P1uart &huart4
-#define P2uart &huart2
-#define P3uart &huart6
-#define P4uart &huart3
-#define P5uart &huart1
-#define P6uart &huart5
-
-
+/* Module-specific Hardware Definitions ************************************/
 /* Port Definitions */
 #define	USART1_TX_PIN		GPIO_PIN_9
 #define	USART1_RX_PIN		GPIO_PIN_10
@@ -98,35 +92,37 @@
 #define	USART6_TX_PORT		GPIOA
 #define	USART6_RX_PORT		GPIOA
 #define	USART6_AF			GPIO_AF3_USART6
-/*  Pins For SevenSegment*/
-#define cc1_Pin GPIO_PIN_13
-#define cc1_GPIO_Port GPIOC
-#define cc2_Pin GPIO_PIN_14
-#define cc2_GPIO_Port GPIOC
-#define E_Pin GPIO_PIN_1
-#define E_GPIO_Port GPIOB
-#define C_Pin GPIO_PIN_2
-#define C_GPIO_Port GPIOB
-#define F_Pin GPIO_PIN_8
-#define F_GPIO_Port GPIOA
-#define G_Pin GPIO_PIN_12
-#define G_GPIO_Port GPIOA
-#define D_Pin GPIO_PIN_1
-#define D_GPIO_Port GPIOD
-#define A_Pin GPIO_PIN_5
-#define A_GPIO_Port GPIOB
-#define DP_Pin GPIO_PIN_8
-#define DP_GPIO_Port GPIOB
-#define B_Pin GPIO_PIN_9
-#define B_GPIO_Port GPIOB
 
-/* Module-specific Definitions */
+/* Pins For Seven Segment */
+#define cc1_Pin             GPIO_PIN_13
+#define cc1_GPIO_Port       GPIOC
+#define cc2_Pin             GPIO_PIN_14
+#define cc2_GPIO_Port       GPIOC
+#define E_Pin               GPIO_PIN_1
+#define E_GPIO_Port         GPIOB
+#define C_Pin               GPIO_PIN_2
+#define C_GPIO_Port         GPIOB
+#define F_Pin               GPIO_PIN_8
+#define F_GPIO_Port         GPIOA
+#define G_Pin               GPIO_PIN_12
+#define G_GPIO_Port         GPIOA
+#define D_Pin               GPIO_PIN_1
+#define D_GPIO_Port         GPIOD
+#define A_Pin               GPIO_PIN_5
+#define A_GPIO_Port         GPIOB
+#define DP_Pin              GPIO_PIN_8
+#define DP_GPIO_Port        GPIOB
+#define B_Pin               GPIO_PIN_9
+#define B_GPIO_Port         GPIOB
+
+/* Indicator LED */
+#define _IND_LED_PORT			GPIOA
+#define _IND_LED_PIN			GPIO_PIN_11
+
+/* Module-specific Macro Definitions ***************************************/
 
 #define NUM_MODULE_PARAMS						1
-/* Module EEPROM Variables */
 
-// Module Addressing Space 500 - 599
-#define _EE_MODULE							500		
 
 /* Module_Status Type Definition */
 typedef enum {
@@ -161,9 +157,7 @@ typedef enum{
 extern uint8_t  test;
 extern int32_t Number;
 
-/* Indicator LED */
-#define _IND_LED_PORT			GPIOA
-#define _IND_LED_PIN			GPIO_PIN_11
+
 
 extern Segment_Codes Digit[2]; //Digit[0]: LSD, Digit[1]: MSD
 extern   char letter[2];
