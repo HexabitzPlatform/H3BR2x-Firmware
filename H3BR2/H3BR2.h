@@ -187,9 +187,6 @@ Module_Status SevenDisplayNumberHexa( uint8_t Hexadecimal);
 Module_Status SevenDisplayOneDigit(uint8_t Number, uint8_t StartSevSeg);
 Module_Status SevenDisplayOneDigitHexa(uint8_t Number, uint8_t StartSevSeg);
 
-void SetupPortForRemoteBootloaderUpdate(uint8_t port);
-void RemoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
-
 #endif /* H3BR2_H */
 
 /***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/
