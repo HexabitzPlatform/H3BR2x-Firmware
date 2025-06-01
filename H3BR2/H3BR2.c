@@ -561,12 +561,12 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src,
 	uint32_t Number_int;
 	float NumberF = 0;
 	switch (code) {
-	case CODE_H3BR2_SevenDisplayNumber:
+	case CODE_H3BR2_SEVEN_DISPLAY_NUMBER:
 		Number = (uint32_t) cMessage[port - 1][shift];
 		SevenDisplayNumber(Number);
 		break;
 
-	case CODE_H3BR2_SevenDisplayNumberF:
+	case CODE_H3BR2_SEVEN_DISPLAY_NUMBER_F:
 		Number_int = ((uint32_t) cMessage[port - 1][shift]
 				+ (uint32_t) (cMessage[port - 1][1 + shift] << 8)
 				+ (uint32_t) (cMessage[port - 1][2 + shift] << 16)
@@ -575,24 +575,24 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src,
 		SevenDisplayNumberF(NumberF);
 		break;
 
-	case CODE_H3BR2_SevenDisplayNumberHexa:
+	case CODE_H3BR2_SEVEN_DISPLAY_NUMBER_HEXA:
 		Number = (uint32_t) cMessage[port - 1][shift];
 		SevenDisplayNumberHexa(Number);
 		break;
 
-	case CODE_H3BR2_SevenDisplayOneDigit:
+	case CODE_H3BR2_SEVEN_DISPLAY_ONE_DIGIT:
 		Number = (uint32_t) cMessage[port - 1][shift];
 		StartSevSeg = (uint32_t) cMessage[port - 1][shift + 1];
 		SevenDisplayOneDigit(Number, StartSevSeg);
 		break;
 
-	case CODE_H3BR2_SevenDisplayOneDigitHexa:
+	case CODE_H3BR2_SEVEN_DISPLAY_ONE_DIGIT_HEXA:
 		Number = (uint32_t) cMessage[port - 1][shift];
 		StartSevSeg = (uint32_t) cMessage[port - 1][shift + 1];
 		SevenDisplayOneDigitHexa(Number, StartSevSeg);
 		break;
 
-	case CODE_H3BR2_SevenDisplayOff:
+	case CODE_H3BR2_SEVEN_DISPLAY_OFF:
 		SevenDisplayOff();
 		break;
 
