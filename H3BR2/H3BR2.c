@@ -2,16 +2,13 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H3BR2.c
- Description   : Source code for module H3BR2.
- 	 	 	 	 (Description_of_module)
-
-(Description of Special module peripheral configuration):
->>
->>
->>
-
- */
+ File Name  : H3BR2.c
+ Description: Main source code for H3BR2 module, controlling a 2-digit 7-segment display.
+ Peripherals: Configures USART1-6 for module ports (P1-P6), uses software timer for 7-segment multiplexing.
+ Features: Displays integers (0-99), floating-point numbers (0.0-9.9), hexadecimal values (0x00-0xFF),
+           and single digits (decimal or hex) on 7-segment. Supports CLI commands, remote bootloader updates,
+           and power modes (stop/standby).
+*/
 
 /* Includes ****************************************************************/
 #include "BOS.h"

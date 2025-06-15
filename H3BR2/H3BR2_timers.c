@@ -2,15 +2,12 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H3BR2_timers.c
- Description   : Peripheral timers setup source file.
+ File Name  : H3BR2_timers.c
+ Description: Implements peripheral timer setup for module operation.
+ Timers: Configures TIM14 (usec delay), TIM15 (msec delay), TIM6 (7-segment display), and IWDG (watchdog).
+ Features: Supports micro/milli-second delays and watchdog timeout.
+*/
 
- Required MCU resources :
-
- >> Timer 14 for micro-sec delay.
- >> Timer 15 for milli-sec delay.
-
- */
 
 /* Includes ****************************************************************/
 #include "BOS.h"

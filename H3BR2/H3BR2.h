@@ -1,17 +1,13 @@
 /*
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
- 
- File Name     : H3BR2.h
- Description   : Header file for module H3BR2.
- 	 	 	 	 (Description_of_module)
 
-(Description of Special module peripheral configuration):
->>
->>
->>
-
- */
+ File Name  : H3BR2.h
+ Description: Header file for H3BR2 module.
+ Peripherals: Defines USART1-6 for ports (P1-P6), GPIO for 7-segment display.
+ Features: Declares functions for 7-segment display (integers, floats, hex, single digits),
+           UART port mappings, and module-specific configurations (GPIO, DMA, EEPROM).
+*/
 
 /* Define to prevent recursive inclusion ***********************************/
 #ifndef H3BR2_H
