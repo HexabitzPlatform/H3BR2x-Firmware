@@ -31,7 +31,6 @@ SegmentCodes Digit[2] = {EMPTY,EMPTY};
 uint8_t StartSevSeg;
 uint8_t SevenSegIndex = 0;
 uint8_t FloatFlag = 0;
-int32_t Number = 0;
 
 /* Module Parameters */
 ModuleParam_t ModuleParam[NUM_MODULE_PARAMS] ={0};
@@ -47,68 +46,36 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 /* Local function prototypes ***********************************************/
 SegmentCodes GetNumberCode(uint8_t digit);
 SegmentCodes ClearAllDigits(void);
-uint32_t GetHexadigitCode(char Number);
 
 /* Create CLI commands *****************************************************/
-portBASE_TYPE CLI_SevenDisplayNumberCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_SevenDisplayNumberFCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_SevenDisplayOffCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_SevenDisplayNumberHexaCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_SevenDisplayOneDigitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
-portBASE_TYPE CLI_SevenDisplayOneDigitHexaCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
-
+portBASE_TYPE CLI_DisplayNumberCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+portBASE_TYPE CLI_DisplayOffCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
+portBASE_TYPE CLI_DisplayNumberHexaCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString );
 /* CLI command structure ***************************************************/
-/* CLI command structure : SevenDisplayNumber */
-const CLI_Command_Definition_t CLI_SevenDisplayNumberCommandDefinition = {
-	(const int8_t*) "sevendisplaynumber", /* The command string to type. */
-	(const int8_t*) "sevendisplaynumber:\r\n Parameters required to execute a SevenDisplayNumber: Number  \r\n\r\n",
-	CLI_SevenDisplayNumberCommand, /* The function to run. */
+/* CLI command structure : DisplayNumber */
+const CLI_Command_Definition_t CLI_DisplayNumberCommandDefinition = {
+	(const int8_t*) "display_num", /* The command string to type. */
+	(const int8_t*) "display_num:\r\n Parameters required to execute a SevenDisplayNumber: Number  \r\n\r\n",
+	CLI_DisplayNumberCommand, /* The function to run. */
 	1 /* one parameter is expected. */
 };
 
 /***************************************************************************/
-/* CLI command structure : SevenDisplayNumberF */
-const CLI_Command_Definition_t CLI_SevenDisplayNumberFCommandDefinition = {
-	(const int8_t*) "sevendisplaynumberf", /* The command string to type. */
-	(const int8_t*) "sevendisplaynumberf:\r\n Parameters required to execute a SevenDisplayNumberF: NumberF  \r\n\r\n",
-	CLI_SevenDisplayNumberFCommand, /* The function to run. */
+/* CLI command structure : DisplayNumberhexa */
+const CLI_Command_Definition_t CLI_DisplayNumberHexaCommandDefinition = {
+	(const int8_t*) "display_num_hexa", /* The command string to type. */
+	(const int8_t*) "display_num_hexa:\r\n Parameters required to execute a SevenDisplayNumber: Number  \r\n\r\n",
+	CLI_DisplayNumberHexaCommand, /* The function to run. */
     1 /* one parameter is expected. */
 };
 
 /***************************************************************************/
-/* CLI command structure : SevenDisplayNumberh */
-const CLI_Command_Definition_t CLI_SevenDisplayNumberHexaCommandDefinition = {
-	(const int8_t*) "sevendisplaynumberhexa", /* The command string to type. */
-	(const int8_t*) "sevendisplaynumberhexa:\r\n Parameters required to execute a SevenDisplayNumber: Number  \r\n\r\n",
-	CLI_SevenDisplayNumberHexaCommand, /* The function to run. */
-    1 /* one parameter is expected. */
-};
-
-/***************************************************************************/
-/* CLI command structure : SevenDisplayOff */
-const CLI_Command_Definition_t CLI_SevenDisplayOffCommandDefinition = {
-	(const int8_t*) "sevendisplayoff", /* The command string to type. */
-	(const int8_t*) "sevendisplayoff:\r\nParameters required to execute a SevenDisplayOff \r\n\r\n",
-	CLI_SevenDisplayOffCommand, /* The function to run. */
+/* CLI command structure : DisplayOff */
+const CLI_Command_Definition_t CLI_DisplayOffCommandDefinition = {
+	(const int8_t*) "display_off", /* The command string to type. */
+	(const int8_t*) "display_off:\r\nParameters required to execute a SevenDisplayOff \r\n\r\n",
+	CLI_DisplayOffCommand, /* The function to run. */
     0 /* zero parameters are expected. */
-};
-
-/***************************************************************************/
-/* CLI command structure : SevenDisplayoneNumbercommand */
-const CLI_Command_Definition_t CLI_SevenDisplayOneDigitCommandDefinition = {
-	(const int8_t*) "sevendisplayonedigit", /* The command string to type. */
-	(const int8_t*) "sevendisplayonedigit:\r\n Parameters required to execute a SevenDisplayNumber: Number , StartSevSeg \r\n\r\n",
-	CLI_SevenDisplayOneDigitCommand, /* The function to run. */
-	2 /* two parameters are expected. */
-};
-
-/***************************************************************************/
-/* CLI command structure : SevenDisplayoneNumberhcommand */
-const CLI_Command_Definition_t CLI_SevenDisplayOneDigitHexaCommandDefinition = {
-	(const int8_t*) "sevendisplayonedigithexa", /* The command string to type. */
-	(const int8_t*) "sevendisplayonedigithexa:\r\n Parameters required to execute a SevenDisplayNumber: Number , StartSevSeg \r\n\r\n",
-	CLI_SevenDisplayOneDigitHexaCommand, /* The function to run. */
-	2 /* two parameters are expected. */
 };
 
 /***************************************************************************/
@@ -550,47 +517,28 @@ void Module_Peripheral_Init(void) {
 /***************************************************************************/
 /* H3BR2 message processing task */
 Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src,
-		uint8_t dst, uint8_t shift) {
+		uint8_t dst, uint8_t shift){
 	Module_Status result = H3BR2_OK;
-	uint32_t Number = 0;
-	uint8_t StartSevSeg = 0;
-
+	uint8_t decimal;
 	uint32_t Number_int;
 	float NumberF = 0;
 	switch (code) {
-	case CODE_H3BR2_SEVEN_DISPLAY_NUMBER:
-		Number = (uint32_t) cMessage[port - 1][shift];
-		SevenDisplayNumber(Number);
-		break;
-
-	case CODE_H3BR2_SEVEN_DISPLAY_NUMBER_F:
+	case CODE_H3BR2_DISPLAY_NUMBER:
 		Number_int = ((uint32_t) cMessage[port - 1][shift]
 				+ (uint32_t) (cMessage[port - 1][1 + shift] << 8)
 				+ (uint32_t) (cMessage[port - 1][2 + shift] << 16)
 				+ (uint32_t) (cMessage[port - 1][3 + shift] << 24));
 		NumberF = *((float*) &Number_int);
-		SevenDisplayNumberF(NumberF);
+		DisplayNumber(NumberF);
 		break;
 
-	case CODE_H3BR2_SEVEN_DISPLAY_NUMBER_HEXA:
-		Number = (uint32_t) cMessage[port - 1][shift];
-		SevenDisplayNumberHexa(Number);
+	case CODE_H3BR2_DISPLAY_NUMBER_HEXA:
+		decimal = (uint32_t) cMessage[port - 1][shift];
+		DisplayNumberHexa(decimal);
 		break;
 
-	case CODE_H3BR2_SEVEN_DISPLAY_ONE_DIGIT:
-		Number = (uint32_t) cMessage[port - 1][shift];
-		StartSevSeg = (uint32_t) cMessage[port - 1][shift + 1];
-		SevenDisplayOneDigit(Number, StartSevSeg);
-		break;
-
-	case CODE_H3BR2_SEVEN_DISPLAY_ONE_DIGIT_HEXA:
-		Number = (uint32_t) cMessage[port - 1][shift];
-		StartSevSeg = (uint32_t) cMessage[port - 1][shift + 1];
-		SevenDisplayOneDigitHexa(Number, StartSevSeg);
-		break;
-
-	case CODE_H3BR2_SEVEN_DISPLAY_OFF:
-		SevenDisplayOff();
+	case CODE_H3BR2_DISPLAY_OFF:
+		DisplayOff();
 		break;
 
 	default:
@@ -624,12 +572,9 @@ uint8_t GetPort(UART_HandleTypeDef *huart) {
 /***************************************************************************/
 /* Register this module CLI Commands */
 void RegisterModuleCLICommands(void) {
-	FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayNumberCommandDefinition);
-	FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayNumberFCommandDefinition);
-	FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayOffCommandDefinition);
-	FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayNumberHexaCommandDefinition);
-	FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayOneDigitCommandDefinition);
-	FreeRTOS_CLIRegisterCommand(&CLI_SevenDisplayOneDigitHexaCommandDefinition);
+	FreeRTOS_CLIRegisterCommand(&CLI_DisplayNumberCommandDefinition);
+	FreeRTOS_CLIRegisterCommand(&CLI_DisplayOffCommandDefinition);
+	FreeRTOS_CLIRegisterCommand(&CLI_DisplayNumberHexaCommandDefinition);
 }
 
 /***************************************************************************/
@@ -697,6 +642,10 @@ void SwitchTimerCallback(TimerHandle_t xTimerSwitch) {
 }
 
 /***************************************************************************/
+/*
+ * GetNumberCode: Function to retrieve the display code for a given digit
+ * digit: The numerical digit (0-9) to get the corresponding display code for
+ */
 SegmentCodes GetNumberCode(uint8_t digit) {
 	Module_Status status = H3BR2_OK;
 
@@ -741,7 +690,6 @@ SegmentCodes GetNumberCode(uint8_t digit) {
 	case 9:
 		code = NINE_NUMBER;
 		break;
-
 	case 10:
 		code = A_LETTER;
 		break;
@@ -770,109 +718,10 @@ SegmentCodes GetNumberCode(uint8_t digit) {
 }
 
 /***************************************************************************/
-uint32_t GetHexadigitCode(char Number) {
-	Module_Status status = H3BR2_OK;
-
-	uint32_t hexadigit_code;
-
-	switch (Number) {
-
-	case 'A':
-		hexadigit_code = 10;
-		break;
-
-	case 'B':
-		hexadigit_code = 11;
-		break;
-
-	case 'C':
-		hexadigit_code = 12;
-		break;
-
-	case 'D':
-		hexadigit_code = 13;
-		break;
-
-	case 'E':
-		hexadigit_code = 14;
-		break;
-
-	case 'F':
-		hexadigit_code = 15;
-		break;
-
-	case 'a':
-		hexadigit_code = 10;
-		break;
-
-	case 'b':
-		hexadigit_code = 11;
-		break;
-
-	case 'c':
-		hexadigit_code = 12;
-		break;
-
-	case 'd':
-		hexadigit_code = 13;
-		break;
-
-	case 'e':
-		hexadigit_code = 14;
-		break;
-
-	case 'f':
-		hexadigit_code = 15;
-		break;
-
-	case '0':
-		hexadigit_code = 0;
-		break;
-
-	case '1':
-		hexadigit_code = 1;
-		break;
-
-	case '2':
-		hexadigit_code = 2;
-		break;
-
-	case '3':
-		hexadigit_code = 3;
-		break;
-
-	case '4':
-		hexadigit_code = 4;
-		break;
-
-	case '5':
-		hexadigit_code = 5;
-		break;
-
-	case '6':
-		hexadigit_code = 6;
-		break;
-
-	case '7':
-		hexadigit_code = 7;
-		break;
-
-	case '8':
-		hexadigit_code = 8;
-		break;
-
-	case '9':
-		hexadigit_code = 9;
-		break;
-
-	default:
-		break;
-
-	}
-	return hexadigit_code;
-}
-
-/***************************************************************************/
+/*
+ * ClearAllDigits: Function to clear all digits on the Seven Segment display
+ * In case of parameters {}
+ */
 SegmentCodes ClearAllDigits(void) {
 	Module_Status status = H3BR2_OK;
 	FloatFlag = 0;
@@ -883,94 +732,107 @@ SegmentCodes ClearAllDigits(void) {
 /***************************************************************************/
 /***************************** General Functions ***************************/
 /***************************************************************************/
-Module_Status SevenDisplayNumberF(float NumberF) {
+/*
+ * DisplayNumber: Function to display a number on the Seven Segment display
+ * Number: The decimal number to be displayed (float)
+ * Display an integer value on the display, the range is from (0 to 99).
+ * Display a float value on the display, the range is from (0 to 9.9).
+ */
+Module_Status DisplayNumber(float Number) {
 	Module_Status status = H3BR2_OK;
-	uint8_t Number_int;
+	uint8_t Number_int=0;
 
 	ClearAllDigits();
 
-	FloatFlag = 1;
-	if (NumberF < 0 || NumberF > 9.9) {
+	if (fmod(Number, 1.0) == 0.0)
+	{
+		status=H3BR2_INT_NUMBER;
+	}
+	else
+	{
+		status =H3BR2_FLOAT_NUMBER ;
+	}
+
+
+	if ((Number >= 0 && Number <= 9)&&status==H3BR2_INT_NUMBER) {
+		status =H3BR2_INT_ONEDIGIT ;
+	}
+	else if ((Number >= 10 && Number <= 99)&&status==H3BR2_INT_NUMBER) {
+		status =H3BR2_INT_TWODIGIT ;
+	}
+	else if ((Number >= 0 && Number <= 9.9)&&status ==H3BR2_FLOAT_NUMBER) {
+		status =H3BR2_FLOAT_NUMBER ;
+	}
+	else
+	{
 		status = H3BR2_NUMBER_IS_OUT_OF_RANGE;
-		return status;
 	}
 
-	Number_int = (uint8_t) (NumberF * 10);
 
-	for (int i = 0; i < 2; i++) {
-		Digit[i] = GetNumberCode(Number_int % 10);
-		Number_int /= 10;
+	switch (status) {
+
+		case H3BR2_INT_ONEDIGIT:
+			FloatFlag = 0;
+			Number_int=Number;
+			Digit[0] = GetNumberCode(Number_int % 10);
+			Digit[1] = EMPTY;
+			status = H3BR2_OK;
+			return status;
+			break;
+
+		case H3BR2_INT_TWODIGIT:
+			FloatFlag = 0;
+			Number_int=Number;
+			Digit[0] = GetNumberCode(Number_int % 10);
+			Number_int /= 10;
+			Digit[1] = GetNumberCode(Number_int % 10);
+			status = H3BR2_OK;
+			return status;
+			break;
+
+		case H3BR2_FLOAT_NUMBER:
+			FloatFlag = 1;
+			Number_int = (uint8_t) (Number * 10);
+			Digit[0] = GetNumberCode(Number_int % 10);
+			Number_int /= 10;
+			Digit[1] = GetNumberCode(Number_int % 10);
+			status = H3BR2_OK;
+			return status;
+			break;
+
+		case H3BR2_NUMBER_IS_OUT_OF_RANGE:
+			FloatFlag = 0;
+			Digit[0] =0XAF;
+			Digit[1] =0X86;
+			return status;
+			break;
+
 	}
 
-	HAL_Delay(5);
-
-	return status;
 }
-
 /***************************************************************************/
-Module_Status SevenDisplayNumber(uint8_t Number) {
-
+/*
+ * DisplayNumberHexa: Function to display a hexa value on the displa
+ * decimal:the range is from (0 ~255)
+ */
+Module_Status DisplayNumberHexa(uint8_t decimal) {
 	Module_Status status = H3BR2_OK;
+	uint8_t low = 0, high = 0;
+	char hex_str[4]={0};
 	ClearAllDigits();
 
-	if (Number < 0 || Number > 99) {
+	if (decimal < 0 || decimal > 255) {
 		status = H3BR2_NUMBER_IS_OUT_OF_RANGE;
 		return status;
 	}
+	sprintf(hex_str, "0x%02X", decimal);
 
-	for (int i = 0; i < 2; i++) {
+	 low = decimal & 0x0F;
+	 high = (decimal & 0xF0) >> 4;
 
-		Digit[i] = GetNumberCode(Number % 10);
-		Number /= 10;
-	}
-	HAL_Delay(5);
-	return status;
-
-}
-
-/***************************************************************************/
-Module_Status SevenDisplayNumberHexa(uint8_t Hexadecimal) {
-	Module_Status status = H3BR2_OK;
-	uint32_t low = 0, high = 0;
-	ClearAllDigits();
-
-	if (Hexadecimal < 0 || Hexadecimal > 255) {
-		status = H3BR2_NUMBER_IS_OUT_OF_RANGE;
-		return status;
-	}
-
-	low = Hexadecimal & 0x0f;
-	high = (Hexadecimal & 0xf0) >> 4;
 
 	Digit[0] = GetNumberCode(low);
 	Digit[1] = GetNumberCode(high);
-	HAL_Delay(5);
-	return status;
-
-}
-
-/***************************************************************************/
-Module_Status SevenDisplayOneDigit(uint8_t Number, uint8_t StartSevSeg) {
-	Module_Status status = H3BR2_OK;
-	ClearAllDigits();   //Seven segment display off
-
-	if (!(StartSevSeg >= 0 && StartSevSeg <= 1)) {
-		status = H3BR2_ERR_WRONGPARAMS;
-		return status;
-	}
-	if (Number > 9) {
-		status = H3BR2_NUMBER_IS_OUT_OF_RANGE;
-		return status;
-	}
-	if (StartSevSeg == 0) {
-
-		Digit[0] = GetNumberCode(Number);
-		Digit[1] = EMPTY;
-	} else if (StartSevSeg == 1) {
-
-		Digit[0] = EMPTY;
-		Digit[1] = GetNumberCode(Number);
-	}
 
 	HAL_Delay(5);
 	return status;
@@ -978,40 +840,10 @@ Module_Status SevenDisplayOneDigit(uint8_t Number, uint8_t StartSevSeg) {
 }
 
 /***************************************************************************/
-Module_Status SevenDisplayOneDigitHexa(uint8_t Hexadecimal, uint8_t StartSevSeg) {
-	Module_Status status = H3BR2_OK;
-
-	ClearAllDigits();
-
-	uint32_t max_value;
-	uint32_t low, high;
-	low = Hexadecimal & 0x0f;
-
-	if (!(StartSevSeg >= 0 && StartSevSeg <= 1)) {
-		status = H3BR2_ERR_WRONGPARAMS;
-		return status;
-	}
-	if (Number > 9) {
-		status = H3BR2_NUMBER_IS_OUT_OF_RANGE;
-		return status;
-	}
-	if (StartSevSeg == 0) {
-
-		Digit[0] = GetNumberCode(low);
-		Digit[1] = EMPTY;
-	} else if (StartSevSeg == 1) {
-
-		Digit[0] = EMPTY;
-		Digit[1] = GetNumberCode(low);
-	}
-
-	HAL_Delay(5);
-	return status;
-
-}
-
-/***************************************************************************/
-Module_Status SevenDisplayOff(void) {
+/*
+ * DisplayOff: Function to turn off the Seven Segment display
+ */
+Module_Status DisplayOff(void) {
 
 	Module_Status status = H3BR2_OK;
 	ClearAllDigits();   //Seven segment display off
@@ -1022,31 +854,38 @@ Module_Status SevenDisplayOff(void) {
 /***************************************************************************/
 /********************************* Commands ********************************/
 /***************************************************************************/
-portBASE_TYPE CLI_SevenDisplayNumberCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+portBASE_TYPE CLI_DisplayNumberCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
 	Module_Status status = H3BR2_OK;
-
+	float Number=0;
+	uint8_t Res=0;
 	static uint8_t *pcParameterString1;
-	portBASE_TYPE xParameterStringLength1 =0;
 
-	static const int8_t *pcOKMessage=(int8_t* )"SevenSegmentDisplay is on:\r\n%d  \n\r";
-	static const int8_t *pcWrongParamsMessage =(int8_t* )"Wrong Params!\n\r";
+	portBASE_TYPE xParameterStringLength1 =0;
+	static const int8_t *formatString[50];
+	static const int8_t *pcOKMessage=(int8_t* )"SevenSegmentDisplay is on:\r\n %%0.%df \n\r";
 	static const int8_t *pcWrongRangeMessage =(int8_t* )"Number is out of range!\n\r";
 
 	(void )xWriteBufferLen;
-		configASSERT(pcWriteBuffer);
+	configASSERT(pcWriteBuffer);
 
 	pcParameterString1 = (int8_t* ) FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength1 );
-	Number = (uint32_t) atol((char*) pcParameterString1);
+	Number = (float) atof((char*) pcParameterString1);
 
-	status = SevenDisplayNumber(Number);
+	status =DisplayNumber(Number);
+
+	if (fmod(Number, 1.0) == 0.0)
+		{
+		Res=0;
+		}
+		else
+		{
+			Res=1;
+		}
 
 	if (status == H3BR2_OK) {
-		sprintf((char*) pcWriteBuffer, (char*) pcOKMessage, Number);
-
+		sprintf((char* )formatString,(char* )pcOKMessage, Res);
+		sprintf((char* )pcWriteBuffer,(char* )formatString,Number);
 	}
-
-	else if (status == H3BR2_ERR_WRONGPARAMS)
-		strcpy((char*) pcWriteBuffer, (char*) pcWrongParamsMessage);
 
 	else if (status == H3BR2_NUMBER_IS_OUT_OF_RANGE)
 		strcpy((char*) pcWriteBuffer, (char*) pcWrongRangeMessage);
@@ -1055,187 +894,54 @@ portBASE_TYPE CLI_SevenDisplayNumberCommand( int8_t *pcWriteBuffer, size_t xWrit
 }
 
 /***************************************************************************/
-portBASE_TYPE CLI_SevenDisplayNumberFCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
+portBASE_TYPE CLI_DisplayNumberHexaCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString) {
 	Module_Status status = H3BR2_OK;
+	uint8_t Number=0;
+	char hex_str[4]={0};
 
-	float NumberF=0;
-	static uint8_t *pcParameterString1;
-	portBASE_TYPE xParameterStringLength1 =0;
-
-
-	static const int8_t *pcOKMessage=(int8_t* )"SevenSegmentDisplay is on:\r\n%0.1f  \n\r";
-	static const int8_t *pcWrongParamsMessage =(int8_t* )"Wrong Params!\n\r";
-	static const int8_t *pcWrongRangeMessage =(int8_t* )"NumberF is out of range!\n\r";
-
-
-
-	(void )xWriteBufferLen;
-		configASSERT(pcWriteBuffer);
-
-	pcParameterString1 =( int8_t* )FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength1 );
-	NumberF = (float )atof((char* )pcParameterString1);
-
-
-	status = SevenDisplayNumberF(NumberF);
-
-	if (status == H3BR2_OK) {
-		sprintf((char*) pcWriteBuffer, (char*) pcOKMessage, NumberF);
-
-	}
-
-	else if (status == H3BR2_ERR_WRONGPARAMS)
-		strcpy((char*) pcWriteBuffer, (char*) pcWrongParamsMessage);
-
-	else if (status == H3BR2_NUMBER_IS_OUT_OF_RANGE)
-		strcpy((char*) pcWriteBuffer, (char*) pcWrongRangeMessage);
-
-	return pdFALSE;
-}
-
-/***************************************************************************/
-portBASE_TYPE CLI_SevenDisplayNumberHexaCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString) {
-	Module_Status status = H3BR2_OK;
-
-	char *Sentence = NULL;
-	uint32_t hexacode;
-	uint32_t hexadigit[2];
 	static uint8_t *pcParameterString1;
 	portBASE_TYPE xParameterStringLength1 = 0;
 
-	static const char *pcOKMessage = (int8_t*) "SevenSegmentDisplay is on:\r\n%c%c \n\r";
-	static const int8_t *pcWrongParamsMessage = (int8_t*) "Wrong Params!\n\r";
+	static const char *pcOKMessage = (int8_t*) "SevenSegmentDisplay is on:\r\n0x%c%c \n\r";
 	static const int8_t *pcWrongRangeMessage = (int8_t*) "Number is out of range!\n\r";
 
 	(void) xWriteBufferLen;
 	configASSERT(pcWriteBuffer);
 
 	pcParameterString1 = (int8_t*) FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength1);
-	Sentence = (char*) pcParameterString1;
+	Number = (uint8_t) atoi((char*) pcParameterString1);
 
-	for (int i = 0; i < 2; i++) {
-		hexadigit[i] = GetHexadigitCode(Sentence[i]);
-	}
+	status = DisplayNumberHexa(Number);
 
-	hexacode = hexadigit[0] * 16 + hexadigit[1];
-
-	status = SevenDisplayNumberHexa(hexacode);
+	sprintf(hex_str, "0x%02X", Number);
 
 	if (status == H3BR2_OK) {
-		sprintf((char*) pcWriteBuffer, (char*) pcOKMessage, Sentence[0],
-				Sentence[1]);
+		sprintf((char*) pcWriteBuffer, (char*) pcOKMessage,hex_str[2] ,hex_str[3]);
 	}
-
-	else if (status == H3BR2_ERR_WRONGPARAMS)
-		strcpy((char*) pcWriteBuffer, (char*) pcWrongParamsMessage);
 
 	else if (status == H3BR2_NUMBER_IS_OUT_OF_RANGE)
 		strcpy((char*) pcWriteBuffer, (char*) pcWrongRangeMessage);
+
 	return pdFALSE;
 }
 
 /***************************************************************************/
-portBASE_TYPE CLI_SevenDisplayOffCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString) {
+portBASE_TYPE CLI_DisplayOffCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString) {
 	Module_Status status = H3BR2_OK;
 
 	static const int8_t *pcOKMessage = (int8_t*) "SevenSegmentDisplay is off \n\r";
-	static const int8_t *pcErrorsMessage = (int8_t*) "Error Params!\n\r";
 
 	(void) xWriteBufferLen;
 	configASSERT(pcWriteBuffer);
 
-	status = SevenDisplayOff();
+	status = DisplayOff();
 
 	if (status == H3BR2_OK) {
 		sprintf((char*) pcWriteBuffer, (char*) pcOKMessage);
 
 	}
-
-	else if (status == H3BR2_ERROR)
-		strcpy((char*) pcWriteBuffer, (char*) pcErrorsMessage);
-
 	return pdFALSE;
 
-}
-
-/***************************************************************************/
-portBASE_TYPE CLI_SevenDisplayOneDigitCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
-	Module_Status status = H3BR2_OK;
-
-	uint32_t Number;
-	uint8_t StartSevSeg;
-	static int8_t *pcParameterString1;
-	static int8_t *pcParameterString2;
-	portBASE_TYPE xParameterStringLength1 =0;
-	portBASE_TYPE xParameterStringLength2 =0;
-
-	static const int8_t *pcOKMessage=(int8_t* )"SevenSegmentDisplay is on:\r\n%d  \n\r";
-	static const int8_t *pcWrongParamsMessage =(int8_t* )"Wrong Params!\n\r";
-	static const int8_t *pcWrongRangeMessage =(int8_t* )"Number is out of range!\n\r";
-
-	(void )xWriteBufferLen;
-	configASSERT(pcWriteBuffer);
-
-	pcParameterString1 = (int8_t* ) FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength1 );
-	Number = (uint32_t ) atol((char* )pcParameterString1);
-
-	pcParameterString2 = (int8_t* ) FreeRTOS_CLIGetParameter(pcCommandString, 2, &xParameterStringLength2 );
-	StartSevSeg = (uint8_t ) atol((char* )pcParameterString2);
-
-	status = SevenDisplayOneDigit(Number, StartSevSeg);
-
-	if (status == H3BR2_OK) {
-		sprintf((char*) pcWriteBuffer, (char*) pcOKMessage, Number);
-
-	}
-
-	else if (status == H3BR2_ERR_WRONGPARAMS)
-		strcpy((char*) pcWriteBuffer, (char*) pcWrongParamsMessage);
-
-	else if (status == H3BR2_NUMBER_IS_OUT_OF_RANGE)
-		strcpy((char*) pcWriteBuffer, (char*) pcWrongRangeMessage);
-
-	return pdFALSE;
-}
-
-/***************************************************************************/
-portBASE_TYPE CLI_SevenDisplayOneDigitHexaCommand( int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString ){
-	Module_Status status = H3BR2_OK;
-
-	char* letter=NULL;
-	uint32_t hexadigit;
-	uint8_t StartSevSeg;
-	static int8_t *pcParameterString1;
-	static int8_t *pcParameterString2;
-	portBASE_TYPE xParameterStringLength1 =0;
-	portBASE_TYPE xParameterStringLength2 =0;
-
-	static const char *pcOKMessage=(int8_t* )"SevenSegmentDisplay is on:\r\n%c \n\r";
-	static const int8_t *pcWrongParamsMessage =(int8_t* )"Wrong Params!\n\r";
-	static const int8_t *pcWrongRangeMessage =(int8_t* )"Number is out of range!\n\r";
-
-	(void )xWriteBufferLen;
-	configASSERT(pcWriteBuffer);
-
-	pcParameterString1 = (int8_t* ) FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength1 );
-	letter =(char* )pcParameterString1;
-	pcParameterString2 = (int8_t* ) FreeRTOS_CLIGetParameter(pcCommandString, 2, &xParameterStringLength2 );
-	StartSevSeg = (uint8_t ) atol((char* )pcParameterString2);
-	hexadigit=GetHexadigitCode(letter[0]);
-
-	status = SevenDisplayOneDigitHexa(hexadigit, StartSevSeg);
-
-	if (status == H3BR2_OK) {
-		sprintf((char*) pcWriteBuffer, (char*) pcOKMessage, letter[0]);
-
-	}
-
-	else if (status == H3BR2_ERR_WRONGPARAMS)
-		strcpy((char*) pcWriteBuffer, (char*) pcWrongParamsMessage);
-
-	else if (status == H3BR2_NUMBER_IS_OUT_OF_RANGE)
-		strcpy((char*) pcWriteBuffer, (char*) pcWrongRangeMessage);
-
-	return pdFALSE;
 }
 
 /***************************************************************************/

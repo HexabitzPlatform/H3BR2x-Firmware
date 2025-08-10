@@ -127,6 +127,10 @@ typedef enum {
 	H3BR2_ERR_UNKNOWNMESSAGE,
 	H3BR2_ERR_WRONGPARAMS,
 	H3BR2_NUMBER_IS_OUT_OF_RANGE,
+	H3BR2_INT_NUMBER,
+	H3BR2_INT_ONEDIGIT,
+	H3BR2_INT_TWODIGIT,
+	H3BR2_FLOAT_NUMBER,
 	H3BR2_ERROR =255
 } Module_Status;
 
@@ -135,13 +139,6 @@ typedef enum{
 	/* Numbers Representation*/
 	ZERO_NUMBER = 0XC0, ONE_NUMBER = 0XF9, TWO_NUMBER = 0XA4, THREE_NUMBER = 0XB0, FOUR_NUMBER = 0X19,
 	FIVE_NUMBER = 0X12, SIX_NUMBER = 0X82, SEVEN_NUMBER = 0XF8, EIGHT_NUMBER = 0X80 ,NINE_NUMBER = 0X90,
-
-	/* Small Letter Representation*/
-	a_LETTER = 0xA0, b_LETTER = 0x83, c_LETTER = 0xA7, d_LETTER = 0xA1, e_LETTER = 0x86, f_LETTER = 0x8E,
-	g_LETTER = 0x90, h_LETTER = 0x8B, i_LETTER = 0xEF, j_LETTER = 0xE1, k_LETTER = 0x8A, l_LETTER = 0xC7,
-	m_LETTER = 0xC8, n_LETTER = 0xAB, o_LETTER = 0xAB, p_LETTER = 0x8C, q_LETTER = 0x67, r_LETTER = 0x50,
-	s_LETTER = 0x93, t_LETTER = 0x87, u_LETTER = 0xE3, v_LETTER = 0xC1, w_LETTER = 0x81, x_LETTER = 0x89,
-	y_LETTER = 0x91, z_LETTER = 0xE4,
 
 	/* Capital Letter Representation*/
 	A_LETTER =0X88, B_LETTER = 0X83, C_LETTER = 0XC6, D_LETTER = 0XA1, E_LETTER = 0X86, F_LETTER = 0X8E,
@@ -176,12 +173,9 @@ extern void SystemClock_Config(void);
 /***************************************************************************/
 /***************************** General Functions ***************************/
 /***************************************************************************/
-Module_Status SevenDisplayOff(void);
-Module_Status SevenDisplayNumber(uint8_t Number);
-Module_Status SevenDisplayNumberF(float NumberF);
-Module_Status SevenDisplayNumberHexa( uint8_t Hexadecimal);
-Module_Status SevenDisplayOneDigit(uint8_t Number, uint8_t StartSevSeg);
-Module_Status SevenDisplayOneDigitHexa(uint8_t Number, uint8_t StartSevSeg);
+Module_Status DisplayOff(void);
+Module_Status DisplayNumber(float Number);
+Module_Status DisplayNumberHexa(uint8_t decimal);
 
 #endif /* H3BR2_H */
 
